@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحريك اللوقو المبتكر</title>
+    <style>
+        /* CSS - التصميم والتنسيق */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0f172a; /* خلفية داكنة لإبراز اللون الأخضر */
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        .container {
+            position: relative;
+            perspective: 1000px; /* لإعطاء عمق 3D */
+        }
+
+        /* الهالة المضيئة خلف اللوقو */
+        .glow-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(74, 124, 44, 0.4) 0%, rgba(15, 23, 42, 0) 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            width: 300px;
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 0 15px rgba(74, 124, 44, 0.3));
+            animation: floating 3s infinite ease-in-out;
+        }
+
+        /* أنيميشن الطفو */
+        @keyframes floating {
+            0%, 100% { transform: translateY(0) rotateX(0); }
+            50% { transform: translateY(-20px) rotateX(10deg); }
+        }
+
+        /* أنيميشن نبض الضوء */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; scale: 1; }
+            50% { opacity: 1; scale: 1.2; }
+        }
+
+        /* نص توضيحي */
+        .info-text {
+            position: absolute;
+            bottom: -60px;
+            width: 100%;
+            text-align: center;
+            color: #4a7c2c;
+            font-weight: bold;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="glow-effect"></div>
+        
+        <div class="logo-wrapper" id="logoContainer">
+            <img src="1000025120.png" alt="Logo" class="logo-img" id="mainLogo">
+            <div class="info-text">حرك الماوس فوق اللوقو</div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript - التفاعل المبتكر
+        const container = document.getElementById('logoContainer');
+        const logo = document.getElementById('mainLogo');
+
+        // تأثير تحريك اللوقو بناءً على حركة الماوس (Parallax 3D)
+        document.addEventListener('mousemove', (e) => {
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 20;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 20;
+            
+            container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // إعادة اللوقو لوضعه الطبيعي عند خروج الماوس
+        container.addEventListener('mouseleave', () => {
+            container.style.transition = "all 0.5s ease";
+            container.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        container.addEventListener('mouseenter', () => {
+            container.style.transition = "none";
+        });
+
+        // تأثير عند الضغط (Click)
+        container.addEventListener('mousedown', () => {
+            container.style.transform = "scale(0.9) rotateZ(5deg)";
+        });
+
+        container.addEventListener('mouseup', () => {
+            container.style.transform = "scale(1.1)";
+        });
+    </script>
+
+</body>
+</html>
