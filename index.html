@@ -1,126 +1,82 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحريك اللوقو المبتكر</title>
-    <style>
-        /* CSS - التصميم والتنسيق */
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #0f172a; /* خلفية داكنة لإبراز اللون الأخضر */
-            overflow: hidden;
-            font-family: sans-serif;
-        }
-
-        .container {
-            position: relative;
-            perspective: 1000px; /* لإعطاء عمق 3D */
-        }
-
-        /* الهالة المضيئة خلف اللوقو */
-        .glow-effect {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, rgba(74, 124, 44, 0.4) 0%, rgba(15, 23, 42, 0) 70%);
-            border-radius: 50%;
-            filter: blur(20px);
-            animation: pulseGlow 4s infinite ease-in-out;
-        }
-
-        .logo-wrapper {
-            position: relative;
-            width: 300px;
-            cursor: pointer;
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-
-        .logo-img {
-            width: 100%;
-            height: auto;
-            display: block;
-            filter: drop-shadow(0 0 15px rgba(74, 124, 44, 0.3));
-            animation: floating 3s infinite ease-in-out;
-        }
-
-        /* أنيميشن الطفو */
-        @keyframes floating {
-            0%, 100% { transform: translateY(0) rotateX(0); }
-            50% { transform: translateY(-20px) rotateX(10deg); }
-        }
-
-        /* أنيميشن نبض الضوء */
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.5; scale: 1; }
-            50% { opacity: 1; scale: 1.2; }
-        }
-
-        /* نص توضيحي */
-        .info-text {
-            position: absolute;
-            bottom: -60px;
-            width: 100%;
-            text-align: center;
-            color: #4a7c2c;
-            font-weight: bold;
-            letter-spacing: 1px;
-            opacity: 0.7;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>نظام كتابة العرائض والتوثيقات – نسخة قانونية متقدمة</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<style>
+body{font-family:'Cairo',sans-serif;background:#eef1f4;margin:0;padding:20px}
+.container{max-width:950px;margin:auto;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:25px}
+.header{text-align:center;border-bottom:2px solid #ddd;padding-bottom:10px;margin-bottom:20px}
+.header h1{margin:0}
+.header p{margin:5px 0;font-size:14px;color:#555}
+select,input,textarea,button{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;font-family:'Cairo'}
+button{background:#1f6feb;color:#fff;font-weight:700;cursor:pointer}
+button:hover{background:#174ea6}
+.form-section{display:none}
+.output{white-space:pre-wrap;border:1px dashed #aaa;padding:20px;border-radius:8px;margin-top:20px;background:#fafafa;line-height:1.9}
+@media print{body{background:#fff}.container{box-shadow:none}}
+</style>
 </head>
 <body>
+<div class="container">
+<div class="header">
+<h1>مكتب …………… للمحاماة والاستشارات القانونية</h1>
+<p>نظام إعداد العرائض والتوثيقات – وفق القانون السوداني</p>
+</div><label>اختر نوع العريضة / التوثيق</label> <select id="type" onchange="showForm()">
 
-    <div class="container">
-        <div class="glow-effect"></div>
-        
-        <div class="logo-wrapper" id="logoContainer">
-            <img src="1000025120.png" alt="Logo" class="logo-img" id="mainLogo">
-            <div class="info-text">حرك الماوس فوق اللوقو</div>
-        </div>
-    </div>
+<option value="">-- اختر --</option>
+<option value="petition">عريضة دعوى</option>
+<option value="authorization">توكيل خاص</option>
+<option value="declaration">إقرار قانوني</option>
+</select><div id="petition" class="form-section">
+<h3>بيانات عريضة الدعوى</h3>
+<input id="court" placeholder="اسم المحكمة" required>
+<input id="plaintiff" placeholder="اسم المدعي" required>
+<input id="defendant" placeholder="اسم المدعى عليه" required>
+<textarea id="subject" placeholder="موضوع الدعوى" required></textarea>
+<textarea id="facts" placeholder="الوقائع بالتفصيل" required></textarea>
+</div><div id="authorization" class="form-section">
+<h3>بيانات التوكيل</h3>
+<input id="principal" placeholder="اسم الموكل" required>
+<input id="agent" placeholder="اسم الوكيل" required>
+<textarea id="authText" placeholder="الصلاحيات الممنوحة للوكيل" required></textarea>
+</div><div id="declaration" class="form-section">
+<h3>بيانات الإقرار</h3>
+<input id="declarant" placeholder="اسم المقر" required>
+<textarea id="decText" placeholder="نص الإقرار القانوني" required></textarea>
+</div><button onclick="generate()">إنشاء النموذج القانوني</button> <button onclick="exportWord()">تصدير إلى Word (A4 رسمي)</button>
 
-    <script>
-        // JavaScript - التفاعل المبتكر
-        const container = document.getElementById('logoContainer');
-        const logo = document.getElementById('mainLogo');
+<div id="result" class="output"></div>
+</div><script>
+let finalText="";
+function showForm(){
+ document.querySelectorAll('.form-section').forEach(s=>s.style.display='none');
+ let t=document.getElementById('type').value;
+ if(t) document.getElementById(t).style.display='block';
+}
 
-        // تأثير تحريك اللوقو بناءً على حركة الماوس (Parallax 3D)
-        document.addEventListener('mousemove', (e) => {
-            let xAxis = (window.innerWidth / 2 - e.pageX) / 20;
-            let yAxis = (window.innerHeight / 2 - e.pageY) / 20;
-            
-            container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        });
+function generate(){
+ let t=document.getElementById('type').value;
+ if(t==='petition'){
+ finalText=`محكمة ${court.value}\n\nالمدعي: ${plaintiff.value}\nالمدعى عليه: ${defendant.value}\n\nالموضوع:\n${subject.value}\n\nالوقائع:\n${facts.value}\n\nلذلك نلتمس من عدالتكم الموقرة إصدار الحكم وفقاً للقانون.\n\nوتفضلوا بقبول فائق الاحترام.\n\nالمقدم:\n…………………`;
+ }
+ if(t==='authorization'){
+ finalText=`توكيل خاص\n\nأنا ${principal.value}، أوكل السيد ${agent.value} توكيلاً خاصاً للقيام بالآتي:\n${authText.value}\n\nوله حق المرافعة والتوقيع واتخاذ كافة الإجراءات القانونية اللازمة.\n\nوهذا إقرار مني بذلك.\n\nالتوقيع:\n…………………`;
+ }
+ if(t==='declaration'){
+ finalText=`إقرار قانوني\n\nأنا الموقع أدناه ${declarant.value} أقر وأنا بكامل قواي العقلية والشرعية بالآتي:\n${decText.value}\n\nوأتحمل كامل المسؤولية القانونية المترتبة على هذا الإقرار.\n\nالمقر:\n…………………`;
+ }
+ document.getElementById('result').textContent=finalText;
+}
 
-        // إعادة اللوقو لوضعه الطبيعي عند خروج الماوس
-        container.addEventListener('mouseleave', () => {
-            container.style.transition = "all 0.5s ease";
-            container.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
-
-        container.addEventListener('mouseenter', () => {
-            container.style.transition = "none";
-        });
-
-        // تأثير عند الضغط (Click)
-        container.addEventListener('mousedown', () => {
-            container.style.transform = "scale(0.9) rotateZ(5deg)";
-        });
-
-        container.addEventListener('mouseup', () => {
-            container.style.transform = "scale(1.1)";
-        });
-    </script>
-
-</body>
+async function exportWord(){
+ if(!finalText){alert('يرجى إنشاء النموذج أولاً');return}
+ const { Document, Packer, Paragraph, TextRun, PageSize } = window.docx;
+ const doc=new Document({sections:[{properties:{page:{size:PageSize.A4}},children:finalText.split("\n").map(l=>new Paragraph({children:[new TextRun({text:l,font:'Arial',size:26})]}))}]});
+ const blob=await Packer.toBlob(doc);
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='وثيقة_قانونية.docx';a.click();
+}
+</script></body>
 </html>
