@@ -502,16 +502,6 @@
                 </div>
 
                 <div id="formFields"></div>
-
-                <div class="additional-info">
-                    <div class="info-title">
-                        <i class="fas fa-info-circle"></i> معلومات إضافية
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">ملاحظات إضافية (اختياري)</label>
-                        <textarea class="form-control" id="additionalNotes" rows="3" placeholder="أي معلومات إضافية تريد إضافتها للعريضة..."></textarea>
-                    </div>
-                </div>
             </div>
 
             <!-- Preview Section -->
@@ -554,10 +544,7 @@
             <button class="btn btn-success" onclick="exportToWord()">
                 <i class="fas fa-file-word"></i> تصدير Word
             </button>
-            <button class="btn btn-warning" onclick="exportToPDF()">
-                <i class="fas fa-file-pdf"></i> تصدير PDF
-            </button>
-            <button class="btn btn-primary" onclick="printPetition()">
+            <button class="btn btn-warning" onclick="printPetition()">
                 <i class="fas fa-print"></i> طباعة مباشرة
             </button>
             <button class="btn btn-danger" onclick="resetForm()">
@@ -594,7 +581,7 @@
                     { id: 'propertyNo', label: 'رقم العقار', type: 'text', required: true },
                     { id: 'area', label: 'المنطقة/الحي', type: 'text', required: true },
                     { id: 'noiseDetails', label: 'تفاصيل الإزعاج', type: 'textarea', required: true },
-                    { id: 'demands', label: 'الطلبات', type: 'textarea', required: true, placeholder: 'مثال: 1- إخلاء العقار 2- المصاريف القانونية...' }
+                    { id: 'demands', label: 'الطلبات', type: 'textarea', required: true, placeholder: 'مثال:\n1- إخلاء العقار\n2- المصاريف القانونية\n3- التعويض المالي' }
                 ]
             },
             sublease: {
@@ -635,7 +622,7 @@
                     <div class="form-group">
                         <label class="form-label ${field.required ? 'required' : ''}">${field.label}</label>
                         ${field.type === 'textarea' ? 
-                            `<textarea class="form-control" id="${field.id}" placeholder="${field.placeholder || 'أدخل ' + field.label}" ${field.required ? 'required' : ''}></textarea>` :
+                            `<textarea class="form-control" id="${field.id}" rows="4" placeholder="${field.placeholder || 'أدخل ' + field.label}" ${field.required ? 'required' : ''}></textarea>` :
                             `<input type="${field.type}" class="form-control" id="${field.id}" placeholder="${field.placeholder || 'أدخل ' + field.label}" ${field.required ? 'required' : ''}>`
                         }
                     </div>
@@ -669,6 +656,16 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="additional-info">
+                    <div class="info-title">
+                        <i class="fas fa-info-circle"></i> معلومات إضافية (اختياري)
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات إضافية</label>
+                        <textarea class="form-control" id="additionalNotes" rows="3" placeholder="أي معلومات إضافية تريد إضافتها للعريضة..."></textarea>
+                    </div>
+                </div>
             `;
             
             formFields.innerHTML = html;
@@ -684,6 +681,7 @@
             
             const template = templates[type] || templates.noise;
             let isValid = true;
+            let missingFields = [];
             
             // التحقق من الحقول المطلوبة
             template.fields.forEach(field => {
@@ -691,13 +689,18 @@
                     const element = document.getElementById(field.id);
                     if (element && !element.value.trim()) {
                         isValid = false;
+                        missingFields.push(field.label);
                         element.style.borderColor = 'var(--accent)';
+                        element.style.boxShadow = '0 0 0 3px rgba(197, 48, 48, 0.1)';
+                    } else if (element) {
+                        element.style.borderColor = '#e2e8f0';
+                        element.style.boxShadow = 'none';
                     }
                 }
             });
             
             if (!isValid) {
-                showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+                showToast(`يرجى ملء الحقول التالية: ${missingFields.join(', ')}`, 'error');
                 return;
             }
             
@@ -741,14 +744,14 @@
                             <p style="text-align: right; padding-right: 20px;">
                                 <strong>ثانياً:</strong> المدعي هو جار للمدعى عليه وقد قام المدعى عليه بما يلي:
                             </p>
-                            <p style="text-align: right; padding-right: 40px;">${noiseDetails}</p>
+                            <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${noiseDetails}</p>
                             <p style="text-align: right; padding-right: 20px;">
-                                <strong>ثالثاً:</strong> تم إنذار المدعى عليه كتابياً ولكن لم يستجب.
+                                <strong>ثالثاً:</strong> تم إنذار المدعى عليه كتابياً بتاريخ ${new Date().toLocaleDateString('ar-SA')} ولكن لم يستجب.
                             </p>
                             
                             <div class="prayer-section">
                                 <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
-                                <p style="text-align: right; padding-right: 40px;">${demands}</p>
+                                <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${demands}</p>
                             </div>
                         </div>
                         
@@ -803,15 +806,15 @@
                                 <strong>أولاً:</strong> المدعي هو المالك للعقار رقم ${propertyNo2} في منطقة ${area2}.
                             </p>
                             <p style="text-align: right; padding-right: 20px;">
-                                <strong>ثانياً:</strong> المدعى عليه الأول يستأجر العقار المذكور بأجرة شهرية قدرها ${rentAmount}.
+                                <strong>ثانياً:</strong> المدعى عليه الأول يستأجر العقار المذكور بأجرة شهرية قدرها ${rentAmount} جنيه.
                             </p>
                             <p style="text-align: right; padding-right: 20px;">
-                                <strong>ثالثاً:</strong> قام المدعى عليه الأول بإيجار العقار للمدعى عليه الثاني من الباطن دون علم أو موافقة المدعي.
+                                <strong>ثالثاً:</strong> قام المدعى عليه الأول بإيجار العقار للمدعى عليه الثاني من الباطن دون علم أو موافقة المدعي، وذلك مخالف لشروط عقد الإيجار.
                             </p>
                             
                             <div class="prayer-section">
                                 <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
-                                <p style="text-align: right; padding-right: 40px;">${demands2}</p>
+                                <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${demands2}</p>
                             </div>
                         </div>
                         
@@ -851,13 +854,13 @@
                 petitionHTML += `
                     <div style="margin-top: 30px; padding: 15px; border-top: 1px solid #ddd;">
                         <p style="font-weight: bold;">ملاحظات إضافية:</p>
-                        <p>${additionalNotes}</p>
+                        <p style="white-space: pre-line;">${additionalNotes}</p>
                     </div>
                 `;
             }
             
             document.getElementById('petitionPreview').innerHTML = petitionHTML;
-            showToast('تم إنشاء العريضة بنجاح', 'success');
+            showToast('تم إنشاء العريضة بنجاح ✓', 'success');
         }
 
         // تصدير إلى Word
@@ -868,19 +871,26 @@
                 return;
             }
             
+            // إعداد رأس HTML مع تنسيق Word
             const header = `
                 <!DOCTYPE html>
                 <html dir="rtl" lang="ar">
                 <head>
                     <meta charset="UTF-8">
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
                     <style>
+                        @page {
+                            size: A4;
+                            margin: 2cm;
+                        }
                         body {
                             font-family: 'Times New Roman', serif;
                             font-size: 18pt;
                             line-height: 2;
                             text-align: right;
                             direction: rtl;
-                            margin: 2cm;
+                            margin: 0;
+                            padding: 40px;
                         }
                         .court-name {
                             text-align: center;
@@ -905,21 +915,29 @@
                             margin: 40pt 0;
                             line-height: 1.8;
                         }
-                        .signature {
+                        .petition-body {
+                            margin: 40pt 0;
+                            text-align: justify;
+                        }
+                        .signature-section {
                             text-align: left;
                             margin-top: 100pt;
-                            padding-right: 50pt;
                         }
-                        .witness {
+                        .witness-section {
                             text-align: right;
                             margin-top: 50pt;
-                            padding-right: 50pt;
                         }
                         .center-text {
                             text-align: center;
                             margin: 40pt 0;
                             font-size: 20pt;
                             font-weight: bold;
+                        }
+                        ol {
+                            padding-right: 40px;
+                        }
+                        li {
+                            margin-bottom: 10pt;
                         }
                     </style>
                 </head>
@@ -929,6 +947,7 @@
             const footer = `</body></html>`;
             const fullHTML = header + content + footer;
             
+            // إنشاء ملف Word
             const blob = new Blob([fullHTML], { type: 'application/msword' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -939,55 +958,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            showToast('تم تصدير العريضة إلى Word', 'success');
-        }
-
-        // تصدير إلى PDF
-        function exportToPDF() {
-            const content = document.getElementById('petitionPreview').innerHTML;
-            if (!content || content.includes('سيظهر محتوى العريضة')) {
-                showToast('يرجى إنشاء العريضة أولاً', 'error');
-                return;
-            }
-            
-            // استخدام طريقة بسيطة للطباعة كبديل لـ PDF
-            const printContent = `
-                <!DOCTYPE html>
-                <html dir="rtl">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>عريضة قانونية</title>
-                    <style>
-                        @media print {
-                            @page {
-                                margin: 2cm;
-                            }
-                            body {
-                                font-family: 'Times New Roman', serif;
-                                font-size: 16pt;
-                                line-height: 2;
-                                text-align: right;
-                                direction: rtl;
-                            }
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${content}
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                        };
-                    <\/script>
-                </body>
-                </html>
-            `;
-            
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-            
-            showToast('جاري فتح نافذة الطباعة للتصدير إلى PDF', 'info');
+            showToast('تم تصدير العريضة إلى Word بنجاح ✓', 'success');
         }
 
         // الطباعة المباشرة
@@ -998,14 +969,30 @@
                 return;
             }
             
+            // إنشاء نافذة طباعة مع تنسيق مناسب
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
                 <!DOCTYPE html>
-                <html dir="rtl">
+                <html dir="rtl" lang="ar">
                 <head>
                     <meta charset="UTF-8">
-                    <title>طباعة العريضة</title>
+                    <title>طباعة العريضة القانونية</title>
                     <style>
+                        @media print {
+                            @page {
+                                size: A4;
+                                margin: 2cm;
+                            }
+                            body {
+                                font-family: 'Times New Roman', serif;
+                                font-size: 16pt;
+                                line-height: 2;
+                                text-align: right;
+                                direction: rtl;
+                                margin: 0;
+                                padding: 0;
+                            }
+                        }
                         body {
                             font-family: 'Times New Roman', serif;
                             font-size: 16pt;
@@ -1013,11 +1000,34 @@
                             text-align: right;
                             direction: rtl;
                             margin: 2cm;
+                            padding: 0;
                         }
-                        @media print {
-                            @page {
-                                margin: 2cm;
-                            }
+                        .court-name {
+                            text-align: center;
+                            font-size: 20pt;
+                            font-weight: bold;
+                            margin-bottom: 30pt;
+                        }
+                        .case-number {
+                            text-align: center;
+                            font-size: 16pt;
+                            margin: 20pt 0;
+                        }
+                        .case-title {
+                            text-align: center;
+                            font-size: 18pt;
+                            font-weight: bold;
+                            margin: 30pt 0;
+                            text-decoration: underline;
+                        }
+                        .parties-info {
+                            text-align: center;
+                            margin: 30pt 0;
+                            line-height: 1.8;
+                        }
+                        .signature-section {
+                            text-align: left;
+                            margin-top: 80pt;
                         }
                     </style>
                 </head>
@@ -1026,7 +1036,9 @@
                     <script>
                         window.onload = function() {
                             window.print();
-                            setTimeout(() => window.close(), 1000);
+                            setTimeout(() => {
+                                window.close();
+                            }, 1000);
                         };
                     <\/script>
                 </body>
@@ -1040,7 +1052,6 @@
             if (confirm('هل أنت متأكد من رغبتك في مسح جميع البيانات؟')) {
                 document.getElementById('petitionType').value = '';
                 document.getElementById('formFields').innerHTML = '';
-                document.getElementById('additionalNotes').value = '';
                 document.getElementById('petitionPreview').innerHTML = `
                     <div class="court-name">محكمة ........ الجزئية</div>
                     <div class="case-number">رقم الدعوى: ............ / ........</div>
@@ -1061,7 +1072,7 @@
                         <p>نقدم لسيادتكم هذه العريضة طالبين فيها ........</p>
                     </div>
                 `;
-                showToast('تم مسح النموذج بنجاح', 'success');
+                showToast('تم مسح النموذج بنجاح ✓', 'success');
             }
         }
 
@@ -1099,14 +1110,16 @@
             const inputs = document.querySelectorAll('.form-control');
             inputs.forEach(input => {
                 input.addEventListener('focus', function() {
-                    this.parentElement.style.transform = 'translateY(-2px)';
+                    this.style.borderColor = 'var(--secondary)';
+                    this.style.boxShadow = '0 0 0 3px rgba(45, 106, 79, 0.1)';
                 });
                 
                 input.addEventListener('blur', function() {
-                    this.parentElement.style.transform = 'translateY(0)';
+                    this.style.borderColor = '#e2e8f0';
+                    this.style.boxShadow = 'none';
                 });
             });
         });
     </script>
 </body>
-</html>
+                    </html>
