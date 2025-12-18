@@ -1,52 +1,722 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>MEELAWFIRM | نظام كتابة العرائض</title>
+<title>MEELAWFIRM | نظام كتابة العرائض القانونية</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js"></script>
 <style>
-body{font-family:Arial;background:#f2f4f7;margin:0;padding:20px}
-.container{max-width:900px;margin:auto;background:#fff;padding:20px;border-radius:8px}
-header{text-align:center;font-size:22px;font-weight:bold;margin-bottom:20px}
-select,input,textarea,button{width:100%;padding:10px;margin:6px 0}
-button{background:#1f6feb;color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer}
-button:hover{background:#174ea6}
-.form-box{border:1px solid #ccc;padding:15px;border-radius:6px;margin-top:15px}
-.output{white-space:pre-line;border:1px dashed #aaa;padding:20px;margin-top:20px;line-height:1.9}
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f2f4f7 0%, #e8edf3 100%);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e8ed;
+}
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #1f6feb;
+}
+header h1 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1f6feb;
+    margin: 0;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+header .subtitle {
+    color: #666;
+    font-size: 16px;
+    margin-top: 10px;
+}
+.system-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border-right: 4px solid #1f6feb;
+}
+.form-control {
+    margin-bottom: 15px;
+}
+.form-control label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+.form-control input,
+.form-control textarea,
+.form-control select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+.form-control input:focus,
+.form-control textarea:focus,
+.form-control select:focus {
+    outline: none;
+    border-color: #1f6feb;
+    box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.1);
+}
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+.form-row .form-control {
+    flex: 1;
+}
+.form-box {
+    border: 2px solid #e1e8ed;
+    padding: 25px;
+    border-radius: 12px;
+    margin-top: 20px;
+    background: #fafbfd;
+    display: none;
+}
+.form-box.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+.buttons {
+    display: flex;
+    gap: 15px;
+    margin: 25px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+button {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 180px;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #1f6feb 0%, #0d4bc3 100%);
+    color: white;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0d4bc3 0%, #093a9d 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 75, 195, 0.3);
+}
+.btn-secondary {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    color: white;
+}
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #1e7e34 0%, #145c27 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(30, 126, 52, 0.3);
+}
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+    color: white;
+}
+.btn-danger:hover {
+    background: linear-gradient(135deg, #bd2130 0%, #8b1a24 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+.output-container {
+    margin-top: 30px;
+}
+.output-header {
+    background: #1f6feb;
+    color: white;
+    padding: 15px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.output-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+.output-content {
+    border: 2px solid #1f6feb;
+    border-top: none;
+    padding: 30px;
+    border-radius: 0 0 8px 8px;
+    background: white;
+    line-height: 1.8;
+    font-size: 17px;
+    white-space: pre-line;
+    max-height: 600px;
+    overflow-y: auto;
+}
+footer {
+    margin-top: 40px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #e1e8ed;
+    color: #666;
+    font-size: 14px;
+}
+.counter {
+    background: #e9ecef;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #495057;
+}
+.attachment-list {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    border: 1px dashed #adb5bd;
+}
+.attachment-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid #dee2e6;
+}
+.witness-row {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    button {
+        min-width: 100%;
+        margin-bottom: 10px;
+    }
+    .output-content {
+        padding: 15px;
+        font-size: 15px;
+    }
+}
 </style>
 </head>
 <body>
-<header>MEELAWFIRM – نظام كتابة العرائض والطلبات</header>
 <div class="container">
-<select id="type" onchange="renderForm()">
-<option value="">اختر نوع العريضة</option>
-<option value="noise">إخلاء للإزعاج العام</option>
-<option value="sublease">إخلاء للإيجار من الباطن</option>
-</select><div id="formArea" class="form-box" style="display:none"></div><button onclick="generate()">إنشاء العريضة</button> <button onclick="exportWord()">تصدير Word</button>
+    <header>
+        <h1>MEELAWFIRM</h1>
+        <div class="subtitle">نظام كتابة العرائض والطلبات القانونية</div>
+    </header>
+    
+    <div class="system-info">
+        <p><strong>الميزات:</strong> إنشاء عرائض قانونية احترافية - دعم كافة أنواع الدعاوى - تصدير مستند Word - واجهة عربية سهلة الاستخدام</p>
+    </div>
+    
+    <div class="form-control">
+        <label for="type">اختر نوع العريضة</label>
+        <select id="type" onchange="renderForm()">
+            <option value="">-- اختر نوع العريضة --</option>
+            <option value="noise">دعوى إخلاء للإزعاج العام وأفعال منافية للآداب</option>
+            <option value="sublease">دعوى إخلاء للإيجار من الباطن</option>
+            <option value="essential_changes">دعوى إخلاء لإجراء تغيرات جوهرية</option>
+            <option value="new_owner">دعوى إخلاء للمالك الجديد</option>
+            <option value="legal_lease_end">دعوى إخلاء لانتهاء الإيجار الحكمي</option>
+            <option value="rent_adjustment">دعوى أجرة المثل</option>
+            <option value="partnership">دعوى فض شراكة</option>
+            <option value="possession">دعوى إثبات حيازة</option>
+            <option value="labor">دعوى عمل</option>
+            <option value="financial1">دعوى مطالبة مالية (نموذج 1)</option>
+            <option value="financial2">دعوى مطالبة مالية (نموذج 2)</option>
+            <option value="sale">دعوى إثبات بيع</option>
+            <option value="easement">دعوى حق الارتفاق</option>
+            <option value="urgent_need">دعوى إخلاء للحاجة الماسة</option>
+            <option value="payment_failure">دعوى إخلاء للفشل في السداد</option>
+        </select>
+    </div>
+    
+    <div id="formArea" class="form-box"></div>
+    
+    <div class="buttons">
+        <button onclick="generate()" class="btn-primary">إنشاء العريضة</button>
+        <button onclick="exportWord()" class="btn-secondary">تصدير مستند Word</button>
+        <button onclick="resetForm()" class="btn-danger">مسح النموذج</button>
+    </div>
+    
+    <div class="output-container">
+        <div class="output-header">
+            <h3>العريضة المُنشأة</h3>
+            <div class="counter">عدد الكلمات: <span id="wordCount">0</span></div>
+        </div>
+        <div id="result" class="output-content"></div>
+    </div>
+    
+    <footer>
+        <p>جميع الحقوق محفوظة © 2024 MEELAWFIRM | نظام كتابة العرائض القانونية</p>
+        <p>الإصدار: 3.0.0 | نظام مخصص لكتابة العرائض والطلبات القانونية فقط</p>
+        <p>لاستخدام مهني يرجى التأكد من صحة البيانات المقدمة</p>
+    </footer>
+</div>
 
-<div id="result" class="output"></div>
-</div><script>
-let content='';
-function renderForm(){
- const t=document.getElementById('type').value;
- const area=document.getElementById('formArea');
- area.style.display='block';
- if(t==='noise'){
- area.innerHTML=`
- <input id="court" placeholder="اسم المحكمة">
- <input id="plaintiff" placeholder="اسم المدعي">
- <input id="paddr" placeholder="عنوان المدعي">
- <input id="pphone" placeholder="رقم هاتف المدعي">
- <input id="defendant" placeholder="اسم المدعى عليه">
- <input id="daddr" placeholder="عنوان المدعى عليه">
- <input id="dphone" placeholder="رقم هاتف المدعى عليه">
- <textarea id="acts" placeholder="الأفعال المسببة للإزعاج"></textarea>`;} if(t==='sublease'){ area.innerHTML=` <input id="court" placeholder="اسم المحكمة"> <input id="plaintiff" placeholder="اسم المدعي"> <input id="paddr" placeholder="عنوان المدعي"> <input id="pphone" placeholder="رقم هاتف المدعي"> <input id="defendant" placeholder="اسم المدعى عليه"> <input id="daddr" placeholder="عنوان المدعى عليه"> <input id="dphone" placeholder="رقم هاتف المدعى عليه">
+<script>
+let content = '';
+let currentTemplate = '';
 
- <textarea id="details" placeholder="تفاصيل الإيجار من الباطن"></textarea>`;} }
+const templates = {
+    noise: {
+        name: 'دعوى إخلاء للإزعاج العام وأفعال منافية للآداب',
+        fields: [
+            { id: 'court', label: 'المحكمة الجزئية', type: 'text' },
+            { id: 'case_number', label: 'رقم القضية والسنة', type: 'text', placeholder: 'ق م/....../ .........' },
+            { id: 'plaintiff', label: 'اسم المدعي', type: 'text' },
+            { id: 'paddress', label: 'عنوان المدعي', type: 'text' },
+            { id: 'defendant', label: 'اسم المدعى عليه', type: 'text' },
+            { id: 'daddress', label: 'عنوان المدعى عليه', type: 'text' },
+            { id: 'property_number', label: 'رقم العقار', type: 'text' },
+            { id: 'city', label: 'المدينة', type: 'text' },
+            { id: 'direction', label: 'الناحية (جهة الجوار)', type: 'text' },
+            { id: 'actions', label: 'الأفعال المسببة للإزعاج', type: 'textarea' },
+            { id: 'fees', label: 'أتعاب المحاماة الاتفاقية', type: 'text', placeholder: 'مبلغ الجنيهات' },
+            { id: 'case_value', label: 'قيمة الدعوى لأجل الرسوم', type: 'text' },
+            { id: 'witness1', label: 'الشاهد الأول', type: 'text' },
+            { id: 'witness2', label: 'الشاهد الثاني', type: 'text' }
+        ]
+    },
+    sublease: {
+        name: 'دعوى إخلاء للإيجار من الباطن',
+        fields: [
+            { id: 'court', label: 'المحكمة الجزئية', type: 'text' },
+            { id: 'case_number', label: 'رقم القضية والسنة', type: 'text' },
+            { id: 'plaintiff', label: 'اسم المدعي', type: 'text' },
+            { id: 'paddress', label: 'عنوان المدعي', type: 'text' },
+            { id: 'defendant1', label: 'اسم المدعى عليه الأول', type: 'text' },
+            { id: 'daddress1', label: 'عنوان المدعى عليه الأول', type: 'text' },
+            { id: 'defendant2', label: 'اسم المدعى عليه الثاني', type: 'text' },
+            { id: 'daddress2', label: 'عنوان المدعى عليه الثاني', type: 'text' },
+            { id: 'property_number', label: 'رقم العقار', type: 'text' },
+            { id: 'city', label: 'المدينة', type: 'text' },
+            { id: 'monthly_rent', label: 'الأجرة الشهرية', type: 'text' },
+            { id: 'fees', label: 'أتعاب المحاماة الاتفاقية', type: 'text' },
+            { id: 'case_value', label: 'قيمة الدعوى لأجل الرسوم', type: 'text' },
+            { id: 'witness1', label: 'الشاهد الأول', type: 'text' },
+            { id: 'witness2', label: 'الشاهد الثاني', type: 'text' }
+        ]
+    },
+    essential_changes: {
+        name: 'دعوى إخلاء لإجراء تغيرات جوهرية',
+        fields: [
+            { id: 'court', label: 'المحكمة الجزئية', type: 'text' },
+            { id: 'case_number', label: 'رقم القضية والسنة', type: 'text' },
+            { id: 'plaintiff', label: 'اسم المدعي', type: 'text' },
+            { id: 'paddress', label: 'عنوان المدعي', type: 'text' },
+            { id: 'defendant', label: 'اسم المدعى عليه', type: 'text' },
+            { id: 'daddress', label: 'عنوان المدعى عليه', type: 'text' },
+            { id: 'property_number', label: 'رقم العقار', type: 'text' },
+            { id: 'city', label: 'المدينة', type: 'text' },
+            { id: 'monthly_rent', label: 'الأجرة الشهرية', type: 'text' },
+            { id: 'changes', label: 'التغيرات الجوهرية', type: 'textarea', placeholder: 'مثل: بناء حائط، فتح باب، إلخ' },
+            { id: 'fees', label: 'أتعاب المحاماة الاتفاقية', type: 'text' },
+            { id: 'case_value', label: 'قيمة الدعوى لأجل الرسوم', type: 'text' },
+            { id: 'witness1', label: 'الشاهد الأول', type: 'text' },
+            { id: 'witness2', label: 'الشاهد الثاني', type: 'text' }
+        ]
+    }
+};
 
-function generate(){ const t=document.getElementById('type').value; if(!t){alert('اختر نوع العريضة');return} if(t==='noise'){ content=لدى محكمة ${court.value}\n\nفيما بين\n${plaintiff.value} مدعي\nالعنوان: ${paddr.value}\nالهاتف: ${pphone.value}\n\nضد\n${defendant.value} مدعى عليه\nالعنوان: ${daddr.value}\nالهاتف: ${dphone.value}\n\nالموضوع / إخلاء للإزعاج العام\n\nالسيد / قاضي المحكمة الموقر\n\nقام المدعى عليه بالآتي:\n${acts.value}\n\nلذلك نلتمس الحكم بالإخلاء.\n\nمقدم العريضة; } if(t==='sublease'){ content=لدى محكمة ${court.value}\n\nفيما بين\n${plaintiff.value} مدعي\nالعنوان: ${paddr.value}\nالهاتف: ${pphone.value}\n\nضد\n${defendant.value} مدعى عليه\nالعنوان: ${daddr.value}\nالهاتف: ${dphone.value}\n\nالموضوع / إخلاء للإيجار من الباطن\n\nتفاصيل الدعوى:\n${details.value}\n\nمقدم العريضة; } document.getElementById('result').textContent=content; }
+function renderForm() {
+    const type = document.getElementById('type').value;
+    const area = document.getElementById('formArea');
+    
+    if (!type) {
+        area.style.display = 'none';
+        return;
+    }
+    
+    area.className = 'form-box active';
+    area.innerHTML = '<h3 style="color: #1f6feb; margin-bottom: 20px;">' + 
+                    (templates[type]?.name || 'نموذج العريضة') + '</h3>';
+    
+    // Generate form fields based on template
+    if (templates[type]) {
+        templates[type].fields.forEach(field => {
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'form-control';
+            
+            const label = document.createElement('label');
+            label.textContent = field.label;
+            label.htmlFor = field.id;
+            
+            let input;
+            if (field.type === 'textarea') {
+                input = document.createElement('textarea');
+                input.rows = 4;
+            } else {
+                input = document.createElement('input');
+                input.type = field.type;
+            }
+            
+            input.id = field.id;
+            input.placeholder = field.placeholder || '';
+            input.className = 'form-input';
+            
+            fieldDiv.appendChild(label);
+            fieldDiv.appendChild(input);
+            area.appendChild(fieldDiv);
+        });
+        
+        // Add witnesses section
+        if (type === 'noise' || type === 'sublease' || type === 'essential_changes') {
+            const witnessDiv = document.createElement('div');
+            witnessDiv.className = 'witness-row';
+            witnessDiv.innerHTML = `
+                <h4 style="color: #495057; margin-bottom: 15px;">بيانات الشهود</h4>
+                <div class="form-row">
+                    <div class="form-control">
+                        <label for="witness1_name">اسم الشاهد الأول</label>
+                        <input type="text" id="witness1_name" placeholder="الاسم كاملاً">
+                    </div>
+                    <div class="form-control">
+                        <label for="witness1_id">رقم الهوية</label>
+                        <input type="text" id="witness1_id" placeholder="رقم الهوية الوطنية">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-control">
+                        <label for="witness2_name">اسم الشاهد الثاني</label>
+                        <input type="text" id="witness2_name" placeholder="الاسم كاملاً">
+                    </div>
+                    <div class="form-control">
+                        <label for="witness2_id">رقم الهوية</label>
+                        <input type="text" id="witness2_id" placeholder="رقم الهوية الوطنية">
+                    </div>
+                </div>
+            `;
+            area.appendChild(witnessDiv);
+        }
+        
+        // Add attachments section
+        const attachmentsDiv = document.createElement('div');
+        attachmentsDiv.className = 'attachment-list';
+        attachmentsDiv.innerHTML = `
+            <h4 style="color: #495057; margin-bottom: 15px;">المرفقات</h4>
+            <div class="attachment-item">
+                <input type="checkbox" id="contract_attachment" checked>
+                <label for="contract_attachment">عقد الإيجار</label>
+            </div>
+            <div class="attachment-item">
+                <input type="checkbox" id="id_copy">
+                <label for="id_copy">صورة الهوية</label>
+            </div>
+            <div class="attachment-item">
+                <input type="checkbox" id="notification_attachment">
+                <label for="notification_attachment">الإنذار</label>
+            </div>
+        `;
+        area.appendChild(attachmentsDiv);
+    }
+    
+    currentTemplate = type;
+}
 
-function exportWord(){ if(!content){alert('أنشئ العريضة أولاً');return} const { Document, Packer, Paragraph } = window.docx; const doc=new Document({sections:[{properties:{page:{size:{width:11906,height:16838}}},children:content.split('\n').map(l=>new Paragraph({text:l,rightToLeft:true}))}]}); Packer.toBlob(doc).then(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='MEELAWFIRM.docx';a.click();}); } </script>
+function generate() {
+    const type = document.getElementById('type').value;
+    
+    if (!type) {
+        alert('يرجى اختيار نوع العريضة أولاً');
+        return;
+    }
+    
+    let petition = '';
+    
+    switch(type) {
+        case 'noise':
+            const court = document.getElementById('court')?.value || '....................';
+            const caseNumber = document.getElementById('case_number')?.value || 'ق م/....../ .........';
+            const plaintiff = document.getElementById('plaintiff')?.value || '........................';
+            const paddress = document.getElementById('paddress')?.value || '........................';
+            const defendant = document.getElementById('defendant')?.value || '........................';
+            const daddress = document.getElementById('daddress')?.value || '........................';
+            const propertyNum = document.getElementById('property_number')?.value || '......';
+            const city = document.getElementById('city')?.value || '.............';
+            const direction = document.getElementById('direction')?.value || '......................';
+            const actions = document.getElementById('actions')?.value || 'تذكر الأفعال المسببة للإزعاج';
+            const fees = document.getElementById('fees')?.value || '...........';
+            const caseValue = document.getElementById('case_value')?.value || '...........';
+            const witness1 = document.getElementById('witness1')?.value || '...............';
+            const witness2 = document.getElementById('witness2')?.value || '...............';
+            
+            petition = `ﻟﺪى  ﻣﺤﻜﻤﺔ ${court} ﺍﻟﺠﺰﺋﻴﺔ
 
+ق م/${caseNumber}
+
+ﻓﻴﻤﺎ ﺑﻴﻦ
+
+${plaintiff}           ﻣﺪﻋﻲ (ﻋﻨﻮﺍﻧﻪ: ${paddress})
+
+ﺿﺪ
+
+${defendant}  ﻣﺪﻋﻰ ﻋﻠﻴﻪ (ﻋﻨﻮﺍﻧﻪ: ${daddress})
+
+ﺍﻟﻤﻮﺿﻮﻉ / ﻟﻼﺯﻋﺎﺝ ﺃﻭ ﺇﺭﺗﻜﺎﺏ ﻣﻨﺎﻓﻴﺔ ﻟﻼﺩﺍﺏ
+
+ﺍﻟﺴﻴﺪ / ﻗﺎﺿﻲ ﻣﺤﻜﻤﺔ ${court} ﺍﻟﺠﺰﺋﻴﺔ :
+
+ﺍﻟﻤﻮﻗﺮ
+
+ﺑﻜﻞ ﺍﻟﺘﻘﺪﻳﺮ ﻭﺍﻻﺣﺘﺮﺍﻡ ﻭﻧﻴﺎﺑﺔ ﻋﻦ ﺍﻟﻤﺪﻋﻲ ﻧﻠﺘﻤﺲ ﻣﻦ ﺳﻴﺎﺩﺗﻜﻢ ﺗﺼﺮﻳﺢ  ﺩﻋﻮﻯ ﻣﺪﻧﻴﺔ ﻓﻲ ﻣﻮﺍﺟﻬﺔ ﺍﻟﻤﺪﻋﻰ ﻋﻠﻴﻪ ﻭﺫﻟﻚ ﻟﻤﺎ ﻳﻠﻲ ﻣﻦ ﺃﺳﺒﺎب:
+
+1 . ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﻳﺴﺘﺄﺟﺮ ﺍﻟﻌﻘﺎﺭ ﺭﻗﻢ (${propertyNum}) ( ﻣﺪﻳﻨﺔ ${city} ) .
+
+2 . ﺍﻟﻤﺪﻋﻲ ﻫﻮ ﺟﺎﺭ ﻟﻠﺴﻜﻦ ﻟﻠﻤﺪﻋﻲ ﻋﻠﻴﻪ ﻣﻦ ﺍﻟﻨﺎﺣﻴﺔ ${direction} .
+
+3 . ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﻗﺎم (${actions}) ﻣﻤﺎ ﺳﺒﺒﺖ ﺇﺯﻋﺎﺝ ﺃﻭ ﻫﻲ ﺃﻓﻌﺎﻝ ﻣﻨﺎﻓﻴﺔ ﻟﻼﺩﺍﺏ ﺗﻀﺮﺭ ﻣﻨﻬﺎ ﺍﻟﻤﺪﻋﻲ .
+
+4 .  ﺍﻟﻤﺪﻋﻲ  ﺃﻧﺬﺭ ﻣﺎﻧﺢ ﺇﻳﺠﺎﺭﺓ ﺍﻟﻌﻘﺎﺭ ﻟﻠﻤﺪﻋﻰ ﻋﻠﻴﻪ ﻭﻃﺎﻟﺒﻪ  ﺑﺄﻥ ﻳﻮﻗﻒ ﺍﻟﻤﺪﻋﻰ ﻋﻠﻴﻪ ﺍﻟﻀﺮﺭ ﻭﻟﻜﻦ ﺭﻓﺾ ﺫﻟﻚ ﺭﻏﻢ ﺇﻧﺬﺍﺭﻩ ﺍﻟﻤﺘﻜﺮﺭ .
+
+5 .  ﻋﻠﻴﻪ ﻭﻟﻜﻞ ﻣﺎﺳﺒﻖ ﻧﻠﺘﻤﺲ ﺍﻟﺤﻜﻢ ﻟﻠﻤﺪﻋﻲ ﺑﺎﻵﺗﻲ :
+
+ﺃ / ﺍﻹﺧﻼﺀ ﻻﺭﺗﻜﺎﺏ ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﺃﻓﻌﺎﻝ ﻣﻨﺎﻓﻴﺔ ﻟﻼﺩﺍﺏ ﺃﻭ ﺍﻹﺯﻋﺎﺝ
+
+ﺏ / ﺍﻟﺮﺳﻮﻡ ﻭﺃﺗﻌﺎﺏ ﺍﻟﻤﺤﺎﻣﺎﺓ ﺍﻹﺗﻔﺎﻗﻴﺔ ﺍﻟﺒﺎﻟﻎ ﻗﺪﺭﻫﺎ (${fees}) .
+
+ﺝ / ﻷﺟﻞ ﺍﻟﺮﺳﻮﻡ ﺗﻘﺪﺭ ﻗﻴﻤﺔ ﺍﻟﺪﻋﻮﻯ ﺏ (${caseValue}) .
+
+ﺍﻟﺸﻬﻮﺩ : 1 . ${witness1}   2 . ${witness2}
+
+ﻭﻟﻜﻢ وافر ﺍﻟﺸﻜﺮ ﻭﺍﻟﺘﻘﺪﻳﺮ
+
+مقدم العريضة
+${plaintiff}`;
+            break;
+            
+        case 'sublease':
+            const court2 = document.getElementById('court')?.value || '....................';
+            const caseNumber2 = document.getElementById('case_number')?.value || 'ق م/....../ .........';
+            const plaintiff2 = document.getElementById('plaintiff')?.value || '........................';
+            const paddress2 = document.getElementById('paddress')?.value || '........................';
+            const defendant1 = document.getElementById('defendant1')?.value || '........................';
+            const daddress1 = document.getElementById('daddress1')?.value || '........................';
+            const defendant2 = document.getElementById('defendant2')?.value || '........................';
+            const daddress2 = document.getElementById('daddress2')?.value || '........................';
+            const propertyNum2 = document.getElementById('property_number')?.value || '......';
+            const city2 = document.getElementById('city')?.value || '.............';
+            const monthlyRent = document.getElementById('monthly_rent')?.value || '...........';
+            const fees2 = document.getElementById('fees')?.value || '...........';
+            const caseValue2 = document.getElementById('case_value')?.value || '...........';
+            const witness12 = document.getElementById('witness1')?.value || '...............';
+            const witness22 = document.getElementById('witness2')?.value || '...............';
+            
+            petition = `ﻟﺪى  ﻣﺤﻜﻤﺔ ${court2} ﺍﻟﺠﺰﺋﻴﺔ
+
+ﻓﻴﻤﺎ ﺑﻴﻦ
+
+${plaintiff2}      ﻣﺪﻋﻲ ( ﻋﻨﻮﺍﻧﻪ: ${paddress2})
+
+ﺿﺪ
+
+${defendant1}      ﻣﺪﻋﻰ ﻋﻠﻴﻪ ﺃﻭﻝ (ﻋﻨﻮﺍﻧﻪ: ${daddress1})
+
+${defendant2}     ﻣﺪﻋﻲ ﻋﻠﻴﻪ ﺛﺎﻥ( ﻋﻨﻮﺍﻧﻪ: ${daddress2})
+
+ق م/${caseNumber2}
+
+ﺍﻟﻤﻮﺿﻮﻉ / ﺇﺧﻼﺀ للإيجارة ﻣﻦ ﺍﻟﺒﺎﻃﻦ
+
+ﺍﻟﺴﻴﺪ / ﻗﺎﺿﻲ ﻣﺤﻜﻤﺔ ${court2} ﺍﻟﺠﺰﺋﻴﺔ :
+
+ﺍﻟﻤﻮﻗﺮ
+
+ﺑﻜﻞ ﺍﻟﺘﻘﺪﻳﺮ ﻭﺍﻻﺣﺘﺮﺍﻡ ﻭﻧﻴﺎﺑﺔ ﻋﻦ ﺍﻟﻤﺪﻋﻲ ﻧﻠﺘﻤﺲ ﻣﻦ ﺳﻴﺎﺩﺗﻜﻢ ﺗﺼﺮﻳﺢ  ﺩﻋﻮﻯ ﻣﺪﻧﻴﺔ ﻓﻲ ﻣﻮﺍﺟﻬﺔ ﺍﻟﻤﺪﻋﻰ ﻋﻠﻴﻪ ﻭﺫﻟﻚ ﻟﻤﺎ ﻳﻠﻲ ﻣﻦ ﺃﺳﺒﺎب:
+
+1 . ﺍﻟﻤﺪﻋﻲ ﻫﻮ ﻣﺎﻧﺢ ﺇﻳﺠﺎﺭﺓ ﺍﻟﻌﻘﺎﺭ ﺭﻗﻢ (${propertyNum2}) ( ﻣﺪﻳﻨﺔ ${city2} )  ﻟﻠﻤﺪﻋﻲ ﻋﻠﻴﻪ ﺍﻷﻭﻝ .
+
+2 - ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﻳﺴﺘﺄﺟﺮ ﺍﻟﻌﻘﺎﺭ ﺍﻟﻤﺬﻛﻮﺭ ﺃﻋﻼﻩ ﺑﺄﺟﺮﺓ ﺷﻬﺮﻳﺔ ﻗﺪﺭﻫﺎ (${monthlyRent}) ﺑﻤﻮﺟﺐ ﻋﻘﺪ ﻣﻜﺘﻮﺏ  .
+
+3 - ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﺍﻷﻭﻝ ﻗﺎﻡ ﺑﺈﻳﺠﺎﺭ ﺍﻟﻌﻘﺎﺭ ﺍﻟﻤﺬﻛﻮﺭ ﻓﻲ ﺍﻟﻔﻘﺮﺓ (1) ﻟﻠﻤﺪﻋﻲ ﻋﻠﻴﻪ ﺍﻟﺜﺎﻧﻲ ﻣﻦ ﺍﻟﺒﺎﻃﻦ ﻭﺩﻭﻥ ﻋﻠﻢ ﻭﻣﻮﺍﻓﻘﺔ ﺍﻟﻤﺪﻋﻲ .
+
+4 .  ﻋﻠﻴﻪ ﻭﻟﻜﻞ ﻣﺎﺳﺒﻖ ﻧﻠﺘﻤﺲ ﺍﻟﺤﻜﻢ ﻟﻠﻤﺪﻋﻲ ﺑﺎﻵﺗﻲ :
+
+ﺃ / ﺇﺧﻼﺀ ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻬﻤﺎ ﺍﻷﻭﻝ ﻭﺍﻟﺜﺎﻧﻲ ﻟﻺﻳﺠﺎﺭﺓ ﻣﻦ ﺍﻟﺒﺎﻃﻦ
+
+ﺏ / ﺍﻟﺮﺳﻮﻡ ﻭﺃﺗﻌﺎﺏ ﺍﻟﻤﺤﺎﻣﺎﺓ ﺍﻹﺗﻔﺎﻗﻴﺔ ﺍﻟﺒﺎﻟﻎ ﻗﺪﺭﻫﺎ (${fees2}) .
+
+ﺝ / ﻷﺟﻞ ﺍﻟﺮﺳﻮﻡ ﺗﻘﺪﺭ ﻗﻴﻤﺔ ﺍﻟﺪﻋﻮﻯ ﺏ (${caseValue2}) .
+
+ﺍﻟﻤﺮﻓﻘﺎﺕ : 1 . ﻋﻘﺪ ﺍﻹﻳﺠﺎﺭ
+
+ﺍﻟﺸﻬﻮﺩ : 1 . ${witness12}   2 . ${witness22}
+
+ﻭﻟﻜﻢ ﺍوافر ﺍﻟﺸﻜﺮ ﻭﺍﻟﺘﻘﺪﻳﺮ
+
+مقدم العريضة
+${plaintiff2}`;
+            break;
+            
+        case 'essential_changes':
+            const court3 = document.getElementById('court')?.value || '....................';
+            const caseNumber3 = document.getElementById('case_number')?.value || 'ق م/....../ .........';
+            const plaintiff3 = document.getElementById('plaintiff')?.value || '........................';
+            const paddress3 = document.getElementById('paddress')?.value || '........................';
+            const defendant3 = document.getElementById('defendant')?.value || '........................';
+            const daddress3 = document.getElementById('daddress')?.value || '........................';
+            const propertyNum3 = document.getElementById('property_number')?.value || '......';
+            const city3 = document.getElementById('city')?.value || '.............';
+            const monthlyRent3 = document.getElementById('monthly_rent')?.value || '...........';
+            const changes = document.getElementById('changes')?.value || 'تذكر التغيرات الجوهرية التي أجراها المدعى عليه';
+            const fees3 = document.getElementById('fees')?.value || '...........';
+            const caseValue3 = document.getElementById('case_value')?.value || '...........';
+            const witness13 = document.getElementById('witness1')?.value || '...............';
+            const witness23 = document.getElementById('witness2')?.value || '...............';
+            
+            petition = `ﻟﺪى  ﻣﺤﻜﻤﺔ ${court3} ﺍﻟﺠﺰﺋﻴﺔ
+
+ﻓﻴﻤﺎ ﺑﻴﻦ
+
+${plaintiff3}      ﻣﺪﻋﻲ (ﻋﻨﻮﺍﻧﻪ: ${paddress3})
+
+ﺿﺪ
+
+${defendant3}   	ﻣﺪﻋﻰ ﻋﻠﻴﻪ (ﻋﻨﻮﺍﻧﻪ: ${daddress3})
+
+ق م/${caseNumber3}
+
+ﺍﻟﻤﻮﺿﻮﻉ / ﺇﺧﻼﺀ ﻹﺟﺮﺍﺀ ﺗﻐﻴﺮﺍﺕ ﺟﻮﻫﺮﻳﺔ
+
+ﺍﻟﺴﻴﺪ / ﻗﺎﺿﻲ ﻣﺤﻜﻤﺔ ${court3} ﺍﻟﺠﺰﺋﻴﺔ :
+
+ﺍﻟﻤﻮﻗﺮ
+
+ﺑﻜﻞ ﺍﻟﺘﻘﺪﻳﺮ ﻭﺍﻻﺣﺘﺮﺍﻡ ﻭﻧﻴﺎﺑﺔ ﻋﻦ ﺍﻟﻤﺪﻋﻲ ﻧﻠﺘﻤﺲ ﻣﻦ ﺳﻴﺎﺩﺗﻜﻢ ﺗﺼﺮﻳﺢ  ﺩﻋﻮﻯ ﻣﺪﻧﻴﺔ ﻓﻲ ﻣﻮﺍﺟﻬﺔ ﺍﻟﻤﺪﻋﻰ ﻋﻠﻴﻪ ﻭﺫﻟﻚ ﻟﻤﺎ ﻳﻠﻲ ﻣﻦ ﺃﺳﺒﺎﺏ :
+
+1 . ﺍﻟﻤﺪﻋﻲ ﻫﻮ ﻣﺎﻧﺢ ﺇﻳﺠﺎﺭﺓ ﺍﻟﻌﻘﺎﺭ ﺭﻗﻢ (${propertyNum3}) ( ﻣﺪﻳﻨﺔ ${city3} )  	( ﻟﻠﻤﺪﻋﻲ ﻋﻠﻴﻪ)  .
+
+2 - ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﻳﺴﺘﺄﺟﺮ ﺍﻟﻌﻘﺎﺭ ﺍﻟﻤﺬﻛﻮﺭ ﺃﻋﻼﻩ ﺑﺄﺟﺮﺓ ﺷﻬﺮﻳﺔ ﻗﺪﺭﻫﺎ (${monthlyRent3}) ﺑﻤﻮﺟﺐ ﻋﻘﺪ ﻣﻜﺘﻮﺏ  .
+
+3 - ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﻗﺎﻡ (${changes})  ﺩﻭﻥ ﻋﻠﻢ ﺍﻟﻤﺪﻋﻲ ﺑﺬﻟﻚ .
+
+4 .  ﻋﻠﻴﻪ ﻭﻟﻜﻞ ﻣﺎﺳﺒﻖ ﻧﻠﺘﻤﺲ ﺍﻟﺤﻜﻢ ﻟﻠﻤﺪﻋﻲ ﺑﺎﻷﺗﻲ :
+
+ﺃ / ﺍﻹﺧﻼﺀ ﻹﺟﺮﺍﺀ ﺗﻐﻴﺮﺍﺕ ﺟﻮﻫﺮﻳﺔ  
+
+ﺏ / ﺍﻟﺮﺳﻮﻡ ﻭﺃﺗﻌﺎﺏ ﺍﻟﻤﺤﺎﻣﺎﺓ ﺍﻹﺗﻔﺎﻗﻴﺔ ﺍﻟﺒﺎﻟﻎ ﻗﺪﺭﻫﺎ (${fees3}) .
+
+ﺝ / ﻷﺟﻞ ﺍﻟﺮﺳﻮﻡ ﺗﻘﺪﺭ ﻗﻴﻤﺔ ﺍﻟﺪﻋﻮﻯ ﺏ (${caseValue3}) .
+
+ﺍﻟﻤﺮﻓﻘﺎﺕ : 1 . ﻋﻘﺪ ﺍﻹﻳﺠﺎﺭ
+
+ﺍﻟﺸﻬﻮﺩ : 1 . ${witness13}   2 . ${witness23}
+
+ﻭﻟﻜﻢ وافر ﺍﻟﺸﻜﺮ ﻭﺍﻟﺘﻘﺪﻳﺮ
+
+مقدم العريضة
+${plaintiff3}`;
+            break;
+            
+        default:
+            petition = 'يرجى اختيار نوع عريضة صحيح';
+    }
+    
+    content = petition;
+    document.getElementById('result').textContent = petition;
+    updateWordCount();
+}
+
+function updateWordCount() {
+    const text = document.getElementById('result').textContent;
+    const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+    document.getElementById('wordCount').textContent = words.length;
+}
+
+function exportWord() {
+    if (!content) {
+        alert('يرجى إنشاء العريضة أولاً');
+        return;
+    }
+    
+    const { Document, Packer, Paragraph, TextRun } = window.docx;
+    
+    const doc = new Document({
+        sections: [{
+            properties: {
+                page: {
+                    size: {
+                        width: 11906,  // A4 width in twips
+                        height: 16838   // A4 height in twips
+                    },
+                    margin: {
+                        top: 1440,
+                        right: 1440,
+                        bottom: 1440,
+                        left: 1440
+                    }
+                }
+            },
+            children: content.split('\n').map(line => 
+                new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: line,
+                            size: 24,  // 12pt in half-points
+                            font: 'Arial',
+                            rightToLeft: true
+                        })
+                    ],
+                    alignment: 'right',
+                    spacing: {
+                        after: 200,
+                        line: 360
+                    }
+                })
+            )
+        }]
+    });
+    
+    Packer.toBlob(doc).then(blob => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `عريضة_MEELAWFIRM_${new Date().toISOString().split('T')[0]}.docx`;
+        link.click();
+    });
+}
+
+function resetForm() {
+    document.getElementById('type').value = '';
+    document.getElementById('formArea').innerHTML = '';
+    document.getElementById('formArea').style.display = 'none';
+    document.getElementById('result').textContent = '';
+    document.getElementById('wordCount').textContent = '0';
+    content = '';
+    currentTemplate = '';
+}
+
+// Initialize on load
+window.onload = function() {
+    document.getElementById('type').value = '';
+};
+</script>
 </body>
 </html>
