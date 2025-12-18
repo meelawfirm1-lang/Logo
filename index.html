@@ -1,108 +1,52 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <title>MEELAWFIRM | نظام كتابة العرائض</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js"></script>
 <style>
-body{font-family:'Arial';background:#f4f6f8;margin:0;padding:20px}
+body{font-family:Arial;background:#f2f4f7;margin:0;padding:20px}
+.container{max-width:900px;margin:auto;background:#fff;padding:20px;border-radius:8px}
 header{text-align:center;font-size:22px;font-weight:bold;margin-bottom:20px}
-select,input,textarea,button{width:100%;margin:6px 0;padding:8px}
-.container{max-width:900px;margin:auto;background:#fff;padding:20px;border-radius:6px}
-.output{white-space:pre-line;border:1px solid #ccc;padding:20px;margin-top:20px}
-@media print{body{background:#fff}.container{box-shadow:none}}
+select,input,textarea,button{width:100%;padding:10px;margin:6px 0}
+button{background:#1f6feb;color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer}
+button:hover{background:#174ea6}
+.form-box{border:1px solid #ccc;padding:15px;border-radius:6px;margin-top:15px}
+.output{white-space:pre-line;border:1px dashed #aaa;padding:20px;margin-top:20px;line-height:1.9}
 </style>
 </head>
 <body>
 <header>MEELAWFIRM – نظام كتابة العرائض والطلبات</header>
 <div class="container">
-<select id="type" onchange="loadForm()">
+<select id="type" onchange="renderForm()">
 <option value="">اختر نوع العريضة</option>
 <option value="noise">إخلاء للإزعاج العام</option>
 <option value="sublease">إخلاء للإيجار من الباطن</option>
-<option value="changes">إخلاء لتغييرات جوهرية</option>
-<option value="newowner">إخلاء للمالك الجديد</option>
-<option value="expiry">إخلاء لانتهاء الإجارة</option>
-<option value="rent">أجرة المثل</option>
-<option value="partnership">فض شراكة</option>
-<option value="possession">إثبات حيازة</option>
-<option value="labor">دعوى عمل</option>
-</select>
-<div id="form"></div>
-<button onclick="generate()">إنشاء العريضة</button>
-<button onclick="exportWord()">تصدير Word</button>
+</select><div id="formArea" class="form-box" style="display:none"></div><button onclick="generate()">إنشاء العريضة</button> <button onclick="exportWord()">تصدير Word</button>
+
 <div id="result" class="output"></div>
-</div>
-<script>
+</div><script>
 let content='';
-function loadForm(){
-const t=document.getElementById('type').value;
-let f='';
-if(t==='noise'){
-f=`<input id="court" placeholder="اسم المحكمة">
-<input id="plaintiff" placeholder="اسم المدعي">
-<input id="paddr" placeholder="عنوان المدعي">
-<input id="pphone" placeholder="رقم هاتف المدعي">
-<input id="paddr" placeholder="عنوان المدعي">
-<input id="defendant" placeholder="اسم المدعى عليه">
-<input id="daddr" placeholder="عنوان المدعى عليه">
-<input id="dphone" placeholder="رقم هاتف المدعى عليه">
-<input id="daddr" placeholder="عنوان المدعى عليه">
-<textarea id="acts" placeholder="الأفعال المسببة للإزعاج"></textarea>`;
-}
-document.getElementById('form').innerHTML=f;
-}
-function generate(){
-const t=document.getElementById('type').value;
-if(t==='noise'){
-content=`لدى محكمة ${court.value}
+function renderForm(){
+ const t=document.getElementById('type').value;
+ const area=document.getElementById('formArea');
+ area.style.display='block';
+ if(t==='noise'){
+ area.innerHTML=`
+ <input id="court" placeholder="اسم المحكمة">
+ <input id="plaintiff" placeholder="اسم المدعي">
+ <input id="paddr" placeholder="عنوان المدعي">
+ <input id="pphone" placeholder="رقم هاتف المدعي">
+ <input id="defendant" placeholder="اسم المدعى عليه">
+ <input id="daddr" placeholder="عنوان المدعى عليه">
+ <input id="dphone" placeholder="رقم هاتف المدعى عليه">
+ <textarea id="acts" placeholder="الأفعال المسببة للإزعاج"></textarea>`;} if(t==='sublease'){ area.innerHTML=` <input id="court" placeholder="اسم المحكمة"> <input id="plaintiff" placeholder="اسم المدعي"> <input id="paddr" placeholder="عنوان المدعي"> <input id="pphone" placeholder="رقم هاتف المدعي"> <input id="defendant" placeholder="اسم المدعى عليه"> <input id="daddr" placeholder="عنوان المدعى عليه"> <input id="dphone" placeholder="رقم هاتف المدعى عليه">
 
-فيما بين
-${plaintiff.value} مدعي
-العنوان: ${paddr.value}
-الهاتف: ${pphone.value}
+ <textarea id="details" placeholder="تفاصيل الإيجار من الباطن"></textarea>`;} }
 
-ضد
-${defendant.value} مدعى عليه
-العنوان: ${daddr.value}
-الهاتف: ${dphone.value}
+function generate(){ const t=document.getElementById('type').value; if(!t){alert('اختر نوع العريضة');return} if(t==='noise'){ content=لدى محكمة ${court.value}\n\nفيما بين\n${plaintiff.value} مدعي\nالعنوان: ${paddr.value}\nالهاتف: ${pphone.value}\n\nضد\n${defendant.value} مدعى عليه\nالعنوان: ${daddr.value}\nالهاتف: ${dphone.value}\n\nالموضوع / إخلاء للإزعاج العام\n\nالسيد / قاضي المحكمة الموقر\n\nقام المدعى عليه بالآتي:\n${acts.value}\n\nلذلك نلتمس الحكم بالإخلاء.\n\nمقدم العريضة; } if(t==='sublease'){ content=لدى محكمة ${court.value}\n\nفيما بين\n${plaintiff.value} مدعي\nالعنوان: ${paddr.value}\nالهاتف: ${pphone.value}\n\nضد\n${defendant.value} مدعى عليه\nالعنوان: ${daddr.value}\nالهاتف: ${dphone.value}\n\nالموضوع / إخلاء للإيجار من الباطن\n\nتفاصيل الدعوى:\n${details.value}\n\nمقدم العريضة; } document.getElementById('result').textContent=content; }
 
-الموضوع / إخلاء للإزعاج العام والأفعال المنافية للآداب
+function exportWord(){ if(!content){alert('أنشئ العريضة أولاً');return} const { Document, Packer, Paragraph } = window.docx; const doc=new Document({sections:[{properties:{page:{size:{width:11906,height:16838}}},children:content.split('\n').map(l=>new Paragraph({text:l,rightToLeft:true}))}]}); Packer.toBlob(doc).then(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='MEELAWFIRM.docx';a.click();}); } </script>
 
-السيد / قاضي المحكمة الموقر
-
-بكل التقدير والاحترام نلتمس تصريح دعوى مدنية وذلك للأسباب الآتية:
-
-1. المدعى عليه قام بالآتي: ${acts.value}.
-
-وعليه نلتمس الحكم بالإخلاء والرسوم وأتعاب المحاماة.
-
-وتفضلوا بقبول فائق الاحترام.
-
-مقدم العريضة`;
-}
-document.getElementById('result').textContent=content;
-}
-function exportWord(){
-const { Document, Packer, Paragraph } = window.docx;
-const doc=new Document({sections:[{properties:{page:{size:{width:11906,height:16838}}},children:content.split('\n').map(l=>new Paragraph({text:l,rightToLeft:true}))}]});
-Packer.toBlob(doc).then(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='MEELAWFIRM.docx';a.click();});
-}
-</script>
 </body>
 </html>
-
-
----
-
-ملاحظة مهمة
-
-جميع النماذج التي زودتنا بها تم اعتمادها شكلاً وصياغة، وما هو ظاهر أعلاه مثال كامل، وبقية العرائض مضمنة بنفس المنهج (أسئلة ⟶ متغيرات ⟶ نص مطابق للنموذج).
-
-الخطوة التالية المقترحة:
-
-إضافة شعار المكتب
-
-إضافة ترقيم الصفحات والتاريخ تلقائياً
-
-إضافة مكتبة قوالب داخلية
