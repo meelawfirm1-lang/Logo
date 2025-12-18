@@ -93,6 +93,15 @@ header .subtitle {
     display: block;
     animation: fadeIn 0.5s ease;
 }
+.alert {
+    background: #fff3cd;
+    color: #856404;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-right: 4px solid #ffc107;
+    font-weight: bold;
+}
 .buttons {
     display: flex;
     gap: 15px;
@@ -203,6 +212,10 @@ footer {
     border-radius: 8px;
     margin-top: 10px;
 }
+.required-field::after {
+    content: " *";
+    color: #dc3545;
+}
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -286,6 +299,25 @@ footer {
 let content = '';
 let currentTemplate = '';
 
+// تخزين معلومات الحقول المطلوبة لكل نموذج
+const requiredFields = {
+    'noise': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress', 'property_number', 'city'],
+    'sublease': ['court', 'plaintiff', 'paddress', 'defendant1', 'daddress1', 'defendant2', 'daddress2', 'property_number', 'city'],
+    'essential_changes': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress', 'property_number', 'city'],
+    'new_owner': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress', 'property_number', 'city'],
+    'legal_lease_end': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress', 'property_number', 'city'],
+    'rent_adjustment': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress', 'property_number', 'city'],
+    'partnership': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress'],
+    'possession': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress'],
+    'labor': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress'],
+    'financial1': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress'],
+    'financial2': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress'],
+    'sale': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress'],
+    'easement': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress'],
+    'urgent_need': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress'],
+    'payment_failure': ['court', 'plaintiff', 'paddress', 'defendant', 'daddress']
+};
+
 function renderForm() {
     const type = document.getElementById('type').value;
     const area = document.getElementById('formArea');
@@ -296,160 +328,268 @@ function renderForm() {
     }
     
     area.className = 'form-box active';
-    area.innerHTML = '<h3 style="color: #1f6feb; margin-bottom: 20px;">' + 
-                    getTemplateName(type) + '</h3>';
+    
+    // إضافة تنبيه لإدخال جميع البيانات
+    let formHTML = `
+        <div class="alert">
+            ⚠️ يرجى ملء جميع البيانات المطلوبة بدقة للحصول على عريضة قانونية صحيحة.
+            <br><small>الحقول المميزة بـ (*) إلزامية</small>
+        </div>
+        <h3 style="color: #1f6feb; margin-bottom: 20px;">${getTemplateName(type)}</h3>
+    `;
     
     // إنشاء حقول النموذج بناءً على النوع
     switch(type) {
         case 'noise':
-            area.innerHTML += `
+            formHTML += `
                 <div class="form-control">
-                    <label for="court">اسم المحكمة</label>
-                    <input type="text" id="court" placeholder="مثال: الخرطوم">
+                    <label for="court" class="required-field">اسم المحكمة</label>
+                    <input type="text" id="court" placeholder="مثال: محكمة الخرطوم الجزئية" required>
                 </div>
                 <div class="form-row">
                     <div class="form-control">
-                        <label for="case_number">رقم القضية</label>
-                        <input type="text" id="case_number" placeholder="ق م/....../ .........">
+                        <label for="case_number">رقم القضية والسنة</label>
+                        <input type="text" id="case_number" placeholder="ق م/123/2024">
                     </div>
                     <div class="form-control">
-                        <label for="case_year">السنة</label>
-                        <input type="text" id="case_year" placeholder="2024">
+                        <label for="register_number">رقم التسجيل</label>
+                        <input type="text" id="register_number" placeholder="رقم التسجيل">
                     </div>
                 </div>
                 <div class="form-control">
-                    <label for="plaintiff">اسم المدعي</label>
-                    <input type="text" id="plaintiff" placeholder="الاسم كاملاً">
+                    <label for="plaintiff" class="required-field">اسم المدعي</label>
+                    <input type="text" id="plaintiff" placeholder="الاسم الثلاثي للمدعي" required>
                 </div>
                 <div class="form-control">
-                    <label for="paddress">عنوان المدعي</label>
-                    <input type="text" id="paddress" placeholder="العنوان التفصيلي">
+                    <label for="paddress" class="required-field">عنوان المدعي</label>
+                    <input type="text" id="paddress" placeholder="العنوان التفصيلي للمدعي" required>
                 </div>
                 <div class="form-control">
-                    <label for="defendant">اسم المدعى عليه</label>
-                    <input type="text" id="defendant" placeholder="الاسم كاملاً">
+                    <label for="defendant" class="required-field">اسم المدعى عليه</label>
+                    <input type="text" id="defendant" placeholder="الاسم الثلاثي للمدعى عليه" required>
                 </div>
                 <div class="form-control">
-                    <label for="daddress">عنوان المدعى عليه</label>
-                    <input type="text" id="daddress" placeholder="العنوان التفصيلي">
+                    <label for="daddress" class="required-field">عنوان المدعى عليه</label>
+                    <input type="text" id="daddress" placeholder="العنوان التفصيلي للمدعى عليه" required>
                 </div>
                 <div class="form-row">
                     <div class="form-control">
-                        <label for="property_number">رقم العقار</label>
-                        <input type="text" id="property_number" placeholder="رقم العقار">
+                        <label for="property_number" class="required-field">رقم العقار</label>
+                        <input type="text" id="property_number" placeholder="رقم العقار المستأجر" required>
                     </div>
                     <div class="form-control">
-                        <label for="city">المدينة</label>
-                        <input type="text" id="city" placeholder="اسم المدينة">
+                        <label for="city" class="required-field">المدينة</label>
+                        <input type="text" id="city" placeholder="اسم المدينة" required>
                     </div>
                 </div>
                 <div class="form-control">
-                    <label for="direction">جهة الجوار</label>
-                    <input type="text" id="direction" placeholder="مثال: الشمال، الجنوب">
+                    <label for="direction" class="required-field">جهة الجوار</label>
+                    <input type="text" id="direction" placeholder="مثال: الشمال، الجنوب، الشرق، الغرب" required>
                 </div>
                 <div class="form-control">
-                    <label for="actions">الأفعال المسببة للإزعاج</label>
-                    <textarea id="actions" rows="4" placeholder="صف الأفعال المزعجة بالتفصيل"></textarea>
+                    <label for="actions" class="required-field">الأفعال المسببة للإزعاج</label>
+                    <textarea id="actions" rows="4" placeholder="صف الأفعال المزعجة بالتفصيل (مثال: رفع صوت الموسيقى ليلاً، المشاجرات المستمرة...)" required></textarea>
+                </div>
+                <div class="form-control">
+                    <label for="notification_details">تفاصيل الإنذار</label>
+                    <textarea id="notification_details" rows="3" placeholder="تفاصيل الإنذارات التي تم إرسالها للمدعى عليه"></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-control">
-                        <label for="fees">أتعاب المحاماة</label>
-                        <input type="text" id="fees" placeholder="مبلغ الجنيهات">
+                        <label for="fees" class="required-field">أتعاب المحاماة</label>
+                        <input type="text" id="fees" placeholder="مبلغ الجنيهات" required>
                     </div>
                     <div class="form-control">
-                        <label for="case_value">قيمة الدعوى</label>
-                        <input type="text" id="case_value" placeholder="قيمة الدعوى">
+                        <label for="case_value" class="required-field">قيمة الدعوى</label>
+                        <input type="text" id="case_value" placeholder="قيمة الدعوى بالجنيه" required>
                     </div>
                 </div>
             `;
             break;
             
         case 'sublease':
-            area.innerHTML += `
+            formHTML += `
                 <div class="form-control">
-                    <label for="court">اسم المحكمة</label>
-                    <input type="text" id="court" placeholder="مثال: أم درمان">
+                    <label for="court" class="required-field">اسم المحكمة</label>
+                    <input type="text" id="court" placeholder="مثال: محكمة أم درمان الجزئية" required>
                 </div>
                 <div class="form-control">
                     <label for="case_number">رقم القضية والسنة</label>
-                    <input type="text" id="case_number" placeholder="ق م/....../ .........">
+                    <input type="text" id="case_number" placeholder="ق م/456/2024">
                 </div>
                 <div class="form-control">
-                    <label for="plaintiff">اسم المدعي (مالك العقار)</label>
-                    <input type="text" id="plaintiff" placeholder="الاسم كاملاً">
+                    <label for="plaintiff" class="required-field">اسم المدعي (مالك العقار)</label>
+                    <input type="text" id="plaintiff" placeholder="الاسم الثلاثي لمالك العقار" required>
                 </div>
                 <div class="form-control">
-                    <label for="paddress">عنوان المدعي</label>
-                    <input type="text" id="paddress" placeholder="العنوان التفصيلي">
+                    <label for="paddress" class="required-field">عنوان المدعي</label>
+                    <input type="text" id="paddress" placeholder="العنوان التفصيلي للمدعي" required>
                 </div>
                 <div class="form-control">
-                    <label for="defendant1">اسم المدعى عليه الأول (المستأجر الأصلي)</label>
-                    <input type="text" id="defendant1" placeholder="الاسم كاملاً">
+                    <label for="defendant1" class="required-field">اسم المدعى عليه الأول (المستأجر الأصلي)</label>
+                    <input type="text" id="defendant1" placeholder="الاسم الثلاثي للمستأجر الأصلي" required>
                 </div>
                 <div class="form-control">
-                    <label for="daddress1">عنوان المدعى عليه الأول</label>
-                    <input type="text" id="daddress1" placeholder="العنوان التفصيلي">
+                    <label for="daddress1" class="required-field">عنوان المدعى عليه الأول</label>
+                    <input type="text" id="daddress1" placeholder="العنوان التفصيلي للمستأجر الأصلي" required>
                 </div>
                 <div class="form-control">
-                    <label for="defendant2">اسم المدعى عليه الثاني (المستأجر من الباطن)</label>
-                    <input type="text" id="defendant2" placeholder="الاسم كاملاً">
+                    <label for="defendant2" class="required-field">اسم المدعى عليه الثاني (المستأجر من الباطن)</label>
+                    <input type="text" id="defendant2" placeholder="الاسم الثلاثي للمستأجر من الباطن" required>
                 </div>
                 <div class="form-control">
-                    <label for="daddress2">عنوان المدعى عليه الثاني</label>
-                    <input type="text" id="daddress2" placeholder="العنوان التفصيلي">
+                    <label for="daddress2" class="required-field">عنوان المدعى عليه الثاني</label>
+                    <input type="text" id="daddress2" placeholder="العنوان التفصيلي للمستأجر من الباطن" required>
                 </div>
                 <div class="form-row">
                     <div class="form-control">
-                        <label for="property_number">رقم العقار</label>
-                        <input type="text" id="property_number" placeholder="رقم العقار">
+                        <label for="property_number" class="required-field">رقم العقار</label>
+                        <input type="text" id="property_number" placeholder="رقم العقار" required>
                     </div>
                     <div class="form-control">
-                        <label for="city">المدينة</label>
-                        <input type="text" id="city" placeholder="اسم المدينة">
+                        <label for="city" class="required-field">المدينة</label>
+                        <input type="text" id="city" placeholder="اسم المدينة" required>
                     </div>
-                </div>
-                <div class="form-control">
-                    <label for="monthly_rent">الأجرة الشهرية</label>
-                    <input type="text" id="monthly_rent" placeholder="مبلغ الجنيهات">
                 </div>
                 <div class="form-row">
                     <div class="form-control">
-                        <label for="fees">أتعاب المحاماة</label>
-                        <input type="text" id="fees" placeholder="مبلغ الجنيهات">
+                        <label for="monthly_rent" class="required-field">الأجرة الشهرية</label>
+                        <input type="text" id="monthly_rent" placeholder="مبلغ الأجرة الشهرية" required>
                     </div>
                     <div class="form-control">
-                        <label for="case_value">قيمة الدعوى</label>
-                        <input type="text" id="case_value" placeholder="قيمة الدعوى">
+                        <label for="contract_date">تاريخ العقد</label>
+                        <input type="text" id="contract_date" placeholder="تاريخ عقد الإيجار">
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label for="sublease_details">تفاصيل الإيجار من الباطن</label>
+                    <textarea id="sublease_details" rows="3" placeholder="تفاصيل عن كيفية اكتشاف الإيجار من الباطن"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-control">
+                        <label for="fees" class="required-field">أتعاب المحاماة</label>
+                        <input type="text" id="fees" placeholder="مبلغ الجنيهات" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="case_value" class="required-field">قيمة الدعوى</label>
+                        <input type="text" id="case_value" placeholder="قيمة الدعوى بالجنيه" required>
                     </div>
                 </div>
             `;
             break;
             
-        // يمكن إضافة المزيد من الحالات هنا لأنواع العرائض الأخرى
+        case 'essential_changes':
+            formHTML += `
+                <div class="form-control">
+                    <label for="court" class="required-field">اسم المحكمة</label>
+                    <input type="text" id="court" placeholder="مثال: محكمة الخرطوم بحري الجزئية" required>
+                </div>
+                <div class="form-control">
+                    <label for="case_number">رقم القضية والسنة</label>
+                    <input type="text" id="case_number" placeholder="ق م/789/2024">
+                </div>
+                <div class="form-control">
+                    <label for="plaintiff" class="required-field">اسم المدعي (مالك العقار)</label>
+                    <input type="text" id="plaintiff" placeholder="الاسم الثلاثي للمدعي" required>
+                </div>
+                <div class="form-control">
+                    <label for="paddress" class="required-field">عنوان المدعي</label>
+                    <input type="text" id="paddress" placeholder="العنوان التفصيلي للمدعي" required>
+                </div>
+                <div class="form-control">
+                    <label for="defendant" class="required-field">اسم المدعى عليه (المستأجر)</label>
+                    <input type="text" id="defendant" placeholder="الاسم الثلاثي للمدعى عليه" required>
+                </div>
+                <div class="form-control">
+                    <label for="daddress" class="required-field">عنوان المدعى عليه</label>
+                    <input type="text" id="daddress" placeholder="العنوان التفصيلي للمدعى عليه" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-control">
+                        <label for="property_number" class="required-field">رقم العقار</label>
+                        <input type="text" id="property_number" placeholder="رقم العقار" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="city" class="required-field">المدينة</label>
+                        <input type="text" id="city" placeholder="اسم المدينة" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-control">
+                        <label for="monthly_rent" class="required-field">الأجرة الشهرية</label>
+                        <input type="text" id="monthly_rent" placeholder="مبلغ الأجرة الشهرية" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="contract_date">تاريخ العقد</label>
+                        <input type="text" id="contract_date" placeholder="تاريخ عقد الإيجار">
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label for="changes" class="required-field">التغيرات الجوهرية التي أجراها المدعى عليه</label>
+                    <textarea id="changes" rows="4" placeholder="وصف التغيرات الجوهرية (مثال: بناء حائط جديد، فتح باب إضافي، تغيير التمديدات الكهربائية...)" required></textarea>
+                </div>
+                <div class="form-control">
+                    <label for="notification_date">تاريخ الإنذار</label>
+                    <input type="text" id="notification_date" placeholder="تاريخ إرسال الإنذار للمدعى عليه">
+                </div>
+                <div class="form-row">
+                    <div class="form-control">
+                        <label for="fees" class="required-field">أتعاب المحاماة</label>
+                        <input type="text" id="fees" placeholder="مبلغ الجنيهات" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="case_value" class="required-field">قيمة الدعوى</label>
+                        <input type="text" id="case_value" placeholder="قيمة الدعوى بالجنيه" required>
+                    </div>
+                </div>
+            `;
+            break;
             
         default:
-            area.innerHTML += `
+            formHTML += `
                 <div class="form-control">
-                    <label for="court">اسم المحكمة</label>
-                    <input type="text" id="court" placeholder="اسم المحكمة">
+                    <label for="court" class="required-field">اسم المحكمة</label>
+                    <input type="text" id="court" placeholder="اسم المحكمة الجزئية" required>
                 </div>
                 <div class="form-control">
-                    <label for="plaintiff">اسم المدعي</label>
-                    <input type="text" id="plaintiff" placeholder="الاسم كاملاً">
+                    <label for="case_number">رقم القضية والسنة</label>
+                    <input type="text" id="case_number" placeholder="ق م/....../2024">
                 </div>
                 <div class="form-control">
-                    <label for="defendant">اسم المدعى عليه</label>
-                    <input type="text" id="defendant" placeholder="الاسم كاملاً">
+                    <label for="plaintiff" class="required-field">اسم المدعي</label>
+                    <input type="text" id="plaintiff" placeholder="الاسم الثلاثي للمدعي" required>
                 </div>
                 <div class="form-control">
-                    <label for="details">تفاصيل الدعوى</label>
-                    <textarea id="details" rows="6" placeholder="أدخل تفاصيل الدعوى هنا..."></textarea>
+                    <label for="paddress" class="required-field">عنوان المدعي</label>
+                    <input type="text" id="paddress" placeholder="العنوان التفصيلي للمدعي" required>
+                </div>
+                <div class="form-control">
+                    <label for="defendant" class="required-field">اسم المدعى عليه</label>
+                    <input type="text" id="defendant" placeholder="الاسم الثلاثي للمدعى عليه" required>
+                </div>
+                <div class="form-control">
+                    <label for="daddress" class="required-field">عنوان المدعى عليه</label>
+                    <input type="text" id="daddress" placeholder="العنوان التفصيلي للمدعى عليه" required>
+                </div>
+                <div class="form-control">
+                    <label for="details" class="required-field">تفاصيل الدعوى</label>
+                    <textarea id="details" rows="6" placeholder="أدخل تفاصيل الدعوى هنا..." required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-control">
+                        <label for="fees" class="required-field">أتعاب المحاماة</label>
+                        <input type="text" id="fees" placeholder="مبلغ الجنيهات" required>
+                    </div>
+                    <div class="form-control">
+                        <label for="case_value" class="required-field">قيمة الدعوى</label>
+                        <input type="text" id="case_value" placeholder="قيمة الدعوى بالجنيه" required>
+                    </div>
                 </div>
             `;
     }
     
-    // إضافة قسم الشهود
-    area.innerHTML += `
+    // إضافة قسم الشهود لجميع النماذج
+    formHTML += `
         <div class="witness-row">
             <h4 style="color: #495057; margin-bottom: 15px;">بيانات الشهود (اختياري)</h4>
             <div class="form-row">
@@ -458,8 +598,8 @@ function renderForm() {
                     <input type="text" id="witness1_name" placeholder="الاسم كاملاً">
                 </div>
                 <div class="form-control">
-                    <label for="witness1_id">رقم الهوية</label>
-                    <input type="text" id="witness1_id" placeholder="رقم الهوية الوطنية">
+                    <label for="witness1_address">عنوان الشاهد الأول</label>
+                    <input type="text" id="witness1_address" placeholder="العنوان التفصيلي">
                 </div>
             </div>
             <div class="form-row">
@@ -468,14 +608,47 @@ function renderForm() {
                     <input type="text" id="witness2_name" placeholder="الاسم كاملاً">
                 </div>
                 <div class="form-control">
-                    <label for="witness2_id">رقم الهوية</label>
-                    <input type="text" id="witness2_id" placeholder="رقم الهوية الوطنية">
+                    <label for="witness2_address">عنوان الشاهد الثاني</label>
+                    <input type="text" id="witness2_address" placeholder="العنوان التفصيلي">
                 </div>
             </div>
         </div>
+        
+        <div class="attachment-list">
+            <h4 style="color: #495057; margin-bottom: 15px;">المرفقات المطلوبة</h4>
+            <div class="attachment-item">
+                <input type="checkbox" id="contract_attachment" checked disabled>
+                <label for="contract_attachment"><strong>عقد الإيجار الأصلي</strong></label>
+            </div>
+            <div class="attachment-item">
+                <input type="checkbox" id="id_copy_attachment">
+                <label for="id_copy_attachment">صورة بطاقة الهوية الوطنية</label>
+            </div>
+            <div class="attachment-item">
+                <input type="checkbox" id="notification_attachment">
+                <label for="notification_attachment">نسخة من الإنذار (إن وجد)</label>
+            </div>
+            <div class="attachment-item">
+                <input type="checkbox" id="other_attachment">
+                <label for="other_attachment">مرفقات أخرى</label>
+            </div>
+        </div>
+        
+        <div class="alert" style="background: #d4edda; color: #155724; border-color: #c3e6cb;">
+            💡 تلميح: تأكد من صحة جميع البيانات قبل إنشاء العريضة
+        </div>
     `;
     
+    area.innerHTML = formHTML;
     currentTemplate = type;
+    
+    // التركيز على أول حقل عند ظهور النموذج
+    setTimeout(() => {
+        const firstInput = area.querySelector('input, textarea');
+        if (firstInput) {
+            firstInput.focus();
+        }
+    }, 100);
 }
 
 function getTemplateName(type) {
@@ -499,20 +672,70 @@ function getTemplateName(type) {
     return names[type] || 'نموذج العريضة';
 }
 
+function validateForm() {
+    const type = currentTemplate;
+    if (!type) return false;
+    
+    const required = requiredFields[type] || [];
+    let isValid = true;
+    let missingFields = [];
+    
+    // التحقق من الحقول المطلوبة
+    required.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field && (!field.value || field.value.trim() === '')) {
+            isValid = false;
+            missingFields.push(field.placeholder || fieldId);
+            
+            // إضافة تأثير لحقل الإدخال الفارغ
+            field.style.borderColor = '#dc3545';
+            field.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.1)';
+            
+            // إزالة التأثير عند البدء بالكتابة
+            field.addEventListener('input', function() {
+                this.style.borderColor = '#ddd';
+                this.style.boxShadow = 'none';
+            }, { once: true });
+        }
+    });
+    
+    if (!isValid) {
+        const fieldNames = missingFields.map(field => `"${field}"`).join('، ');
+        alert(`❗ يرجى ملء الحقول المطلوبة التالية:\n\n${fieldNames}`);
+        
+        // التمركز على أول حقل فارغ
+        const firstMissingField = document.getElementById(required.find(fieldId => {
+            const field = document.getElementById(fieldId);
+            return field && (!field.value || field.value.trim() === '');
+        }));
+        if (firstMissingField) {
+            firstMissingField.focus();
+        }
+    }
+    
+    return isValid;
+}
+
 function generatePetition() {
     const type = document.getElementById('type').value;
     
     if (!type) {
-        alert('يرجى اختيار نوع العريضة أولاً');
+        alert('❗ يرجى اختيار نوع العريضة أولاً');
+        return;
+    }
+    
+    // التحقق من صحة البيانات
+    if (!validateForm()) {
         return;
     }
     
     let petition = '';
     
+    // إنشاء العريضة حسب النوع
     switch(type) {
         case 'noise':
             const court = document.getElementById('court')?.value || '....................';
-            const caseNumber = document.getElementById('case_number')?.value || 'ق م/....../ .........';
+            const caseNumber = document.getElementById('case_number')?.value || '';
             const plaintiff = document.getElementById('plaintiff')?.value || '........................';
             const paddress = document.getElementById('paddress')?.value || '........................';
             const defendant = document.getElementById('defendant')?.value || '........................';
@@ -521,12 +744,15 @@ function generatePetition() {
             const city = document.getElementById('city')?.value || '.............';
             const direction = document.getElementById('direction')?.value || '......................';
             const actions = document.getElementById('actions')?.value || 'تذكر الأفعال المسببة للإزعاج';
+            const notificationDetails = document.getElementById('notification_details')?.value || 'تم إرسال إنذار للمدعى عليه ولم يستجب';
             const fees = document.getElementById('fees')?.value || '...........';
             const caseValue = document.getElementById('case_value')?.value || '...........';
+            const witness1 = document.getElementById('witness1_name')?.value || '...............';
+            const witness2 = document.getElementById('witness2_name')?.value || '...............';
             
             petition = `ﻟﺪى  ﻣﺤﻜﻤﺔ ${court} ﺍﻟﺠﺰﺋﻴﺔ
 
-${caseNumber}
+${caseNumber ? caseNumber : 'ق م/....../ .........'}
 
 ﻓﻴﻤﺎ ﺑﻴﻦ
 
@@ -550,7 +776,7 @@ ${defendant}  ﻣﺪﻋﻰ ﻋﻠﻴﻪ (ﻋﻨﻮﺍﻧﻪ: ${daddress})
 
 3 . ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﻗﺎم (${actions}) ﻣﻤﺎ ﺳﺒﺒﺖ ﺇﺯﻋﺎﺝ ﺃﻭ ﻫﻲ ﺃﻓﻌﺎﻝ ﻣﻨﺎﻓﻴﺔ ﻟﻼﺩﺍﺏ ﺗﻀﺮﺭ ﻣﻨﻬﺎ ﺍﻟﻤﺪﻋﻲ .
 
-4 .  ﺍﻟﻤﺪﻋﻲ  ﺃﻧﺬﺭ ﻣﺎﻧﺢ ﺇﻳﺠﺎﺭﺓ ﺍﻟﻌﻘﺎﺭ ﻟﻠﻤﺪﻋﻰ ﻋﻠﻴﻪ ﻭﻃﺎﻟﺒﻪ  ﺑﺄﻥ ﻳﻮﻗﻒ ﺍﻟﻤﺪﻋﻰ ﻋﻠﻴﻪ ﺍﻟﻀﺮﺭ ﻭﻟﻜﻦ ﺭﻓﺾ ﺫﻟﻚ ﺭﻏﻢ ﺇﻧﺬﺍﺭﻩ ﺍﻟﻤﺘﻜﺮﺭ .
+4 . ${notificationDetails}
 
 5 .  ﻋﻠﻴﻪ ﻭﻟﻜﻞ ﻣﺎﺳﺒﻖ ﻧﻠﺘﻤﺲ ﺍﻟﺤﻜﻢ ﻟﻠﻤﺪﻋﻲ ﺑﺎﻵﺗﻲ :
 
@@ -560,7 +786,7 @@ ${defendant}  ﻣﺪﻋﻰ ﻋﻠﻴﻪ (ﻋﻨﻮﺍﻧﻪ: ${daddress})
 
 ﺝ / ﻷﺟﻞ ﺍﻟﺮﺳﻮﻡ ﺗﻘﺪﺭ ﻗﻴﻤﺔ ﺍﻟﺪﻋﻮﻯ ﺏ (${caseValue}) .
 
-ﺍﻟﺸﻬﻮﺩ : 1 . _______________   2 . _______________
+ﺍﻟﺸﻬﻮﺩ : 1 . ${witness1}   2 . ${witness2}
 
 ﻭﻟﻜﻢ وافر ﺍﻟﺸﻜﺮ ﻭﺍﻟﺘﻘﺪﻳﺮ
 
@@ -580,8 +806,12 @@ ${plaintiff}`;
             const propertyNum2 = document.getElementById('property_number')?.value || '......';
             const city2 = document.getElementById('city')?.value || '.............';
             const monthlyRent = document.getElementById('monthly_rent')?.value || '...........';
+            const contractDate = document.getElementById('contract_date')?.value || '...........';
+            const subleaseDetails = document.getElementById('sublease_details')?.value || 'اكتشف المدعي أن المدعى عليه الأول قام بإيجار العقار للمدعى عليه الثاني من الباطن دون علمه أو موافقته';
             const fees2 = document.getElementById('fees')?.value || '...........';
             const caseValue2 = document.getElementById('case_value')?.value || '...........';
+            const witness12 = document.getElementById('witness1_name')?.value || '...............';
+            const witness22 = document.getElementById('witness2_name')?.value || '...............';
             
             petition = `ﻟﺪى  ﻣﺤﻜﻤﺔ ${court2} ﺍﻟﺠﺰﺋﻴﺔ
 
@@ -605,11 +835,11 @@ ${caseNumber2}
 
 ﺑﻜﻞ ﺍﻟﺘﻘﺪﻳﺮ ﻭﺍﻻﺣﺘﺮﺍﻡ ﻭﻧﻴﺎﺑﺔ ﻋﻦ ﺍﻟﻤﺪﻋﻲ ﻧﻠﺘﻤﺲ ﻣﻦ ﺳﻴﺎﺩﺗﻜﻢ ﺗﺼﺮﻳﺢ  ﺩﻋﻮﻯ ﻣﺪﻧﻴﺔ ﻓﻲ ﻣﻮﺍﺟﻬﺔ ﺍﻟﻤﺪﻋﻰ ﻋﻠﻴﻪ ﻭﺫﻟﻚ ﻟﻤﺎ ﻳﻠﻲ ﻣﻦ ﺃﺳﺒﺎب:
 
-1 . ﺍﻟﻤﺪﻋﻲ ﻫﻮ ﻣﺎﻧﺢ ﺇﻳﺠﺎﺭﺓ ﺍﻟﻌﻘﺎﺭ ﺭﻗﻢ (${propertyNum2}) ( ﻣﺪﻳﻨﺔ ${city2} )  ﻟﻠﻤﺪﻋﻲ ﻋﻠﻴﻪ ﺍﻷﻭﻝ .
+1 . ﺍﻟﻤﺪﻋﻲ ﻫﻮ ﻣﺎﻧﺢ ﺇﻳﺠﺎﺭﺓ ﺍﻟﻌﻘﺎﺭ ﺭﻗﻢ (${propertyNum2}) ( ﻣﺪﻳﻨﺔ ${city2} )  ﻟﻠﻤﺪﻋﻲ ﻋﻠﻴﻪ ﺍﻷﻭﻝ ${contractDate ? 'بتاريخ ' + contractDate : ''} .
 
 2 - ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﻳﺴﺘﺄﺟﺮ ﺍﻟﻌﻘﺎﺭ ﺍﻟﻤﺬﻛﻮﺭ ﺃﻋﻼﻩ ﺑﺄﺟﺮﺓ ﺷﻬﺮﻳﺔ ﻗﺪﺭﻫﺎ (${monthlyRent}) ﺑﻤﻮﺟﺐ ﻋﻘﺪ ﻣﻜﺘﻮﺏ  .
 
-3 - ﺍﻟﻤﺪﻋﻲ ﻋﻠﻴﻪ ﺍﻷﻭﻝ ﻗﺎﻡ ﺑﺈﻳﺠﺎﺭ ﺍﻟﻌﻘﺎﺭ ﺍﻟﻤﺬﻛﻮﺭ ﻓﻲ ﺍﻟﻔﻘﺮﺓ (1) ﻟﻠﻤﺪﻋﻲ ﻋﻠﻴﻪ ﺍﻟﺜﺎﻧﻲ ﻣﻦ ﺍﻟﺒﺎﻃﻦ ﻭﺩﻭﻥ ﻋﻠﻢ ﻭﻣﻮﺍﻓﻘﺔ ﺍﻟﻤﺪﻋﻲ .
+3 - ${subleaseDetails} .
 
 4 .  ﻋﻠﻴﻪ ﻭﻟﻜﻞ ﻣﺎﺳﺒﻖ ﻧﻠﺘﻤﺲ ﺍﻟﺤﻜﻢ ﻟﻠﻤﺪﻋﻲ ﺑﺎﻵﺗﻲ :
 
@@ -619,9 +849,9 @@ ${caseNumber2}
 
 ﺝ / ﻷﺟﻞ ﺍﻟﺮﺳﻮﻡ ﺗﻘﺪﺭ ﻗﻴﻤﺔ ﺍﻟﺪﻋﻮﻯ ﺏ (${caseValue2}) .
 
-ﺍﻟﻤﺮﻓﻘﺎﺕ : 1 . ﻋﻘﺪ ﺍﻹﻳﺠﺎﺭ
+ﺍﻟﻤﺮﻓﻘﺎﺕ : 1 . ﻋﻘﺪ ﺍﻹﻳﺠﺎﺭ 2 . مستندات إثبات الإيجار من الباطن
 
-ﺍﻟﺸﻬﻮﺩ : 1 . _______________   2 . _______________
+ﺍﻟﺸﻬﻮﺩ : 1 . ${witness12}   2 . ${witness22}
 
 ﻭﻟﻜﻢ ﺍوافر ﺍﻟﺸﻜﺮ ﻭﺍﻟﺘﻘﺪﻳﺮ
 
@@ -629,23 +859,33 @@ ${caseNumber2}
 ${plaintiff2}`;
             break;
             
-        case 'essential_changes':
+        default:
+            // نموذج عام للأنواع الأخرى
             const court3 = document.getElementById('court')?.value || '....................';
+            const caseNumber3 = document.getElementById('case_number')?.value || 'ق م/....../ .........';
             const plaintiff3 = document.getElementById('plaintiff')?.value || '........................';
+            const paddress3 = document.getElementById('paddress')?.value || '........................';
             const defendant3 = document.getElementById('defendant')?.value || '........................';
+            const daddress3 = document.getElementById('daddress')?.value || '........................';
             const details3 = document.getElementById('details')?.value || '................................................';
+            const fees3 = document.getElementById('fees')?.value || '...........';
+            const caseValue3 = document.getElementById('case_value')?.value || '...........';
+            const witness13 = document.getElementById('witness1_name')?.value || '...............';
+            const witness23 = document.getElementById('witness2_name')?.value || '...............';
             
             petition = `ﻟﺪى  ﻣﺤﻜﻤﺔ ${court3} ﺍﻟﺠﺰﺋﻴﺔ
 
+${caseNumber3}
+
 ﻓﻴﻤﺎ ﺑﻴﻦ
 
-${plaintiff3}      ﻣﺪﻋﻲ
+${plaintiff3}      ﻣﺪﻋﻲ (ﻋﻨﻮﺍﻧﻪ: ${paddress3})
 
 ﺿﺪ
 
-${defendant3}   	ﻣﺪﻋﻰ ﻋﻠﻴﻪ
+${defendant3}   	ﻣﺪﻋﻰ ﻋﻠﻴﻪ (ﻋﻨﻮﺍﻧﻪ: ${daddress3})
 
-ﺍﻟﻤﻮﺿﻮﻉ / ﺇﺧﻼﺀ ﻹﺟﺮﺍﺀ ﺗﻐﻴﺮﺍﺕ ﺟﻮﻫﺮﻳﺔ
+ﺍﻟﻤﻮﺿﻮﻉ / ${getTemplateName(type)}
 
 ﺍﻟﺴﻴﺪ / ﻗﺎﺿﻲ ﻣﺤﻜﻤﺔ ${court3} ﺍﻟﺠﺰﺋﻴﺔ :
 
@@ -655,47 +895,41 @@ ${defendant3}   	ﻣﺪﻋﻰ ﻋﻠﻴﻪ
 
 ${details3}
 
+ﻋﻠﻴﻪ ﻭﻟﻜﻞ ﻣﺎﺳﺒﻖ ﻧﻠﺘﻤﺲ ﺍﻟﺤﻜﻢ ﻟﻠﻤﺪﻋﻲ ﺑﺎﻵﺗﻲ :
+
+ﺃ / الحكم بما يطلبه المدعي في هذه الدعوى
+
+ﺏ / ﺍﻟﺮﺳﻮﻡ ﻭﺃﺗﻌﺎﺏ ﺍﻟﻤﺤﺎﻣﺎﺓ ﺍﻹﺗﻔﺎﻗﻴﺔ ﺍﻟﺒﺎﻟﻎ ﻗﺪﺭﻫﺎ (${fees3}) .
+
+ﺝ / ﻷﺟﻞ ﺍﻟﺮﺳﻮﻡ ﺗﻘﺪﺭ ﻗﻴﻤﺔ ﺍﻟﺪﻋﻮﻯ ﺏ (${caseValue3}) .
+
+ﺍﻟﺸﻬﻮﺩ : 1 . ${witness13}   2 . ${witness23}
+
 ﻭﻟﻜﻢ وافر ﺍﻟﺸﻜﺮ ﻭﺍﻟﺘﻘﺪﻳﺮ
 
 مقدم العريضة
 ${plaintiff3}`;
-            break;
-            
-        default:
-            const court = document.getElementById('court')?.value || '....................';
-            const plaintiff = document.getElementById('plaintiff')?.value || '........................';
-            const defendant = document.getElementById('defendant')?.value || '........................';
-            const details = document.getElementById('details')?.value || '................................................';
-            
-            petition = `ﻟﺪى  ﻣﺤﻜﻤﺔ ${court} ﺍﻟﺠﺰﺋﻴﺔ
-
-ﻓﻴﻤﺎ ﺑﻴﻦ
-
-${plaintiff}      ﻣﺪﻋﻲ
-
-ﺿﺪ
-
-${defendant}   	ﻣﺪﻋﻰ ﻋﻠﻴﻪ
-
-ﺍﻟﻤﻮﺿﻮﻉ / ${getTemplateName(type)}
-
-ﺍﻟﺴﻴﺪ / ﻗﺎﺿﻲ ﻣﺤﻜﻤﺔ ${court} ﺍﻟﺠﺰﺋﻴﺔ :
-
-ﺍﻟﻤﻮﻗﺮ
-
-ﺑﻜﻞ ﺍﻟﺘﻘﺪﻳﺮ ﻭﺍﻻﺣﺘﺮﺍﻡ ﻭﻧﻴﺎﺑﺔ ﻋﻦ ﺍﻟﻤﺪﻋﻲ ﻧﻠﺘﻤﺲ ﻣﻦ ﺳﻴﺎﺩﺗﻜﻢ ﺗﺼﺮﻳﺢ  ﺩﻋﻮﻯ ﻣﺪﻧﻴﺔ ﻓﻲ ﻣﻮﺍﺟﻬﺔ ﺍﻟﻤﺪﻋﻰ ﻋﻠﻴﻪ ﻭﺫﻟﻚ ﻟﻤﺎ ﻳﻠﻲ ﻣﻦ ﺃﺳﺒﺎﺏ :
-
-${details}
-
-ﻭﻟﻜﻢ وافر ﺍﻟﺸﻜﺮ ﻭﺍﻟﺘﻘﺪﻳﺮ
-
-مقدم العريضة
-${plaintiff}`;
     }
     
     content = petition;
     document.getElementById('result').textContent = petition;
     updateWordCount();
+    
+    // إظهار رسالة نجاح
+    showSuccessMessage();
+}
+
+function showSuccessMessage() {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert';
+    alertDiv.style.cssText = 'background: #d4edda; color: #155724; border-color: #c3e6cb; position: fixed; top: 20px; right: 20px; z-index: 1000; animation: slideIn 0.5s ease;';
+    alertDiv.innerHTML = '✅ تم إنشاء العريضة بنجاح! يمكنك الآن تصديرها كمستند Word.';
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
 }
 
 function updateWordCount() {
@@ -706,7 +940,7 @@ function updateWordCount() {
 
 function exportWord() {
     if (!content) {
-        alert('يرجى إنشاء العريضة أولاً');
+        alert('❗ يرجى إنشاء العريضة أولاً');
         return;
     }
     
@@ -724,7 +958,11 @@ function exportWord() {
                     rightToLeft: true
                 })
             ],
-            alignment: 'right'
+            alignment: 'right',
+            spacing: {
+                after: 200,
+                line: 360
+            }
         })
     );
     
@@ -756,30 +994,67 @@ function exportWord() {
         const date = new Date().toISOString().split('T')[0];
         link.download = `عريضة_${templateName}_${date}.docx`;
         link.click();
+        
+        // إظهار رسالة نجاح التصدير
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert';
+        alertDiv.style.cssText = 'background: #d1ecf1; color: #0c5460; border-color: #bee5eb; position: fixed; top: 20px; right: 20px; z-index: 1000; animation: slideIn 0.5s ease;';
+        alertDiv.innerHTML = '📄 تم تصدير العريضة بنجاح! يتم تنزيل الملف الآن.';
+        
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
     });
 }
 
 function resetForm() {
-    document.getElementById('type').value = '';
-    document.getElementById('formArea').innerHTML = '';
-    document.getElementById('formArea').style.display = 'none';
-    document.getElementById('result').textContent = '';
-    document.getElementById('wordCount').textContent = '0';
-    content = '';
-    currentTemplate = '';
+    if (confirm('⚠️ هل أنت متأكد من رغبتك في مسح جميع البيانات؟')) {
+        document.getElementById('type').value = '';
+        document.getElementById('formArea').innerHTML = '';
+        document.getElementById('formArea').style.display = 'none';
+        document.getElementById('result').textContent = '';
+        document.getElementById('wordCount').textContent = '0';
+        content = '';
+        currentTemplate = '';
+        
+        // إظهار رسالة تأكيد
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert';
+        alertDiv.style.cssText = 'background: #f8d7da; color: #721c24; border-color: #f5c6cb; position: fixed; top: 20px; right: 20px; z-index: 1000; animation: slideIn 0.5s ease;';
+        alertDiv.innerHTML = '🗑️ تم مسح النموذج بنجاح';
+        
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
 }
 
-// إضافة مستمع للأحداث لمعالجة Enter في الحقول
+// إضافة أنماط CSS للرسائل المتحركة
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+`;
+document.head.appendChild(style);
+
+// مستمع للأحداث عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', function() {
+    // إضافة تأثيرات للحقول عند التركيز عليها
     const inputs = document.querySelectorAll('input, textarea, select');
     inputs.forEach(input => {
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-                e.preventDefault();
-                if (e.target.type !== 'button') {
-                    generatePetition();
-                }
-            }
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'transform 0.2s ease';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
         });
     });
 });
