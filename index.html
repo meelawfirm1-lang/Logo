@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEELAWFIRM | نظام كتابة العرائض القانونية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Mirza&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary: #1a365d;
             --secondary: #2d6a4f;
             --accent: #c53030;
-            --light: #f7fafc;
-            --dark: #2d3748;
+            --light: #f8fafc;
+            --dark: #1e293b;
             --paper: #fefefe;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --radius: 8px;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
         }
 
         * {
@@ -25,28 +28,38 @@
         }
 
         body {
-            font-family: 'Mirza', 'Segoe UI', sans-serif;
+            font-family: 'Noto Kufi Arabic', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: var(--dark);
-            line-height: 1.8;
+            line-height: 1.6;
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
+        }
+
+        /* تحسينات للأجهزة المحمولة */
+        @media (max-width: 768px) {
+            body {
+                background: var(--light);
+            }
         }
 
         .app-container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: var(--light);
-            border-radius: var(--radius);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            min-height: 100vh;
+            position: relative;
         }
 
         /* Header */
         .app-header {
             background: linear-gradient(135deg, var(--primary), #2c5282);
             color: white;
-            padding: 20px 30px;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .header-content {
@@ -68,7 +81,7 @@
             color: var(--primary);
             width: 50px;
             height: 50px;
-            border-radius: 50%;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -78,9 +91,9 @@
         }
 
         .brand-text h1 {
-            font-size: 28px;
+            font-size: 26px;
             margin-bottom: 5px;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .brand-text p {
@@ -88,35 +101,170 @@
             font-size: 14px;
         }
 
+        /* تصنيفات العرائض */
+        .petition-categories {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* شريط البحث */
+        .search-container {
+            position: relative;
+            margin: 15px 0;
+            max-width: 500px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 16px;
+            background: white;
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        /* قائمة النماذج */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            margin: 0 20px 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .template-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: var(--secondary);
+        }
+
+        .template-card.active {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, #f0fff4, #ffffff);
+        }
+
+        .template-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), #2c5282);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .template-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .template-category {
+            font-size: 12px;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 3px 10px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
         /* Main Layout */
         .main-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            padding: 30px;
-            min-height: 70vh;
+            gap: 20px;
+            padding: 20px;
+            min-height: calc(100vh - 200px);
         }
 
         @media (max-width: 1024px) {
             .main-layout {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
         }
 
         /* Form Section */
         .form-section {
-            background: white;
+            background: var(--card-bg);
             border-radius: var(--radius);
             padding: 25px;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            height: fit-content;
+            position: sticky;
+            top: 140px;
+        }
+
+        @media (max-width: 1024px) {
+            .form-section {
+                position: static;
+            }
         }
 
         .section-heading {
             color: var(--primary);
             margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 3px solid var(--secondary);
-            font-size: 24px;
+            border-bottom: 2px solid var(--secondary);
+            font-size: 22px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -136,7 +284,7 @@
             margin-bottom: 8px;
             font-weight: 600;
             color: var(--dark);
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .required::after {
@@ -148,11 +296,11 @@
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
             transition: all 0.3s ease;
             background: white;
-            font-family: 'Mirza', sans-serif;
+            font-family: 'Noto Kufi Arabic', sans-serif;
         }
 
         .form-control:focus {
@@ -172,7 +320,13 @@
             gap: 15px;
         }
 
-        /* Preview Section - Paper Style */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Preview Section - ورقة إفور */
         .preview-section {
             background: #f5f5f5;
             border-radius: var(--radius);
@@ -180,18 +334,28 @@
             display: flex;
             flex-direction: column;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
         }
 
         .paper-container {
             flex: 1;
             background: var(--paper);
-            border-radius: 2px;
-            padding: 40px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 40px 50px;
+            border: 2px solid #d4d4d4;
+            box-shadow: 
+                0 0 0 1px #fff,
+                0 0 30px rgba(0, 0, 0, 0.08),
+                inset 0 0 30px rgba(0, 0, 0, 0.02);
             position: relative;
             overflow: hidden;
-            min-height: 600px;
+            min-height: 700px;
+            font-family: 'Times New Roman', 'Arial', serif;
+            background-image: 
+                linear-gradient(to right, #f0f0f0 1px, transparent 1px),
+                linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: 0 0;
         }
 
         .paper-container::before {
@@ -205,75 +369,99 @@
             pointer-events: none;
         }
 
+        .paper-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to top, rgba(0,0,0,0.05), transparent);
+            pointer-events: none;
+        }
+
         .petition-content {
             font-family: 'Times New Roman', 'Arial', serif;
-            font-size: 18px;
+            font-size: 16px;
             line-height: 2;
             color: #000;
             text-align: right;
             direction: rtl;
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            background: var(--paper);
+            padding: 20px;
+            min-height: 100%;
         }
 
+        /* تنسيقات النص الخاصة بالمستند */
         .court-name {
             text-align: center;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             margin-bottom: 30px;
             color: #000;
-            padding-bottom: 10px;
+            padding-bottom: 15px;
             border-bottom: 2px solid #000;
+            font-family: 'Times New Roman', serif;
         }
 
         .case-number {
             text-align: center;
-            font-size: 18px;
-            margin: 20px 0;
+            font-size: 16px;
+            margin: 25px 0;
             color: #000;
+            font-family: 'Times New Roman', serif;
         }
 
         .case-title {
             text-align: center;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             margin: 30px 0;
             color: #000;
             text-decoration: underline;
+            font-family: 'Times New Roman', serif;
         }
 
         .parties-info {
             text-align: center;
             margin: 30px 0;
             line-height: 1.8;
+            font-family: 'Times New Roman', serif;
         }
 
         .petition-body {
             margin: 30px 0;
             text-align: justify;
+            font-family: 'Times New Roman', serif;
         }
 
         .prayer-section {
             margin: 40px 0;
             padding-right: 20px;
+            font-family: 'Times New Roman', serif;
         }
 
         .signature-section {
             text-align: left;
             margin-top: 100px;
             padding-right: 50px;
+            font-family: 'Times New Roman', serif;
         }
 
         .signature-line {
-            width: 200px;
+            width: 250px;
             border-bottom: 1px solid #000;
             margin-top: 40px;
+            margin-right: 20px;
         }
 
         .witness-section {
             text-align: right;
             margin-top: 50px;
             padding-right: 50px;
+            font-family: 'Times New Roman', serif;
         }
 
         .witness-item {
@@ -283,20 +471,21 @@
         /* Action Buttons */
         .action-buttons {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 20px;
             padding: 20px;
             background: white;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
         }
 
         .btn {
-            padding: 15px 20px;
+            padding: 14px 20px;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -304,7 +493,8 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            font-family: 'Mirza', sans-serif;
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            white-space: nowrap;
         }
 
         .btn:hover {
@@ -332,13 +522,19 @@
             color: white;
         }
 
+        .btn-info {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+        }
+
         /* Footer */
         .app-footer {
             background: var(--primary);
             color: white;
             padding: 20px;
             text-align: center;
-            font-family: 'Mirza', sans-serif;
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            margin-top: 20px;
         }
 
         .footer-content {
@@ -349,33 +545,51 @@
             gap: 15px;
         }
 
+        .version {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .main-layout {
-                padding: 15px;
-                gap: 20px;
+                padding: 10px;
+                gap: 15px;
             }
             
-            .form-row {
-                grid-template-columns: 1fr;
+            .form-section,
+            .preview-section {
+                padding: 15px;
+            }
+            
+            .paper-container {
+                padding: 20px;
+                min-height: 500px;
             }
             
             .action-buttons {
+                margin: 10px;
                 grid-template-columns: 1fr;
-                margin: 15px;
             }
             
             .footer-content {
                 flex-direction: column;
                 text-align: center;
-            }
-            
-            .paper-container {
-                padding: 20px;
+                gap: 10px;
             }
             
             .petition-content {
-                font-size: 16px;
+                font-size: 14px;
+            }
+            
+            .templates-grid {
+                grid-template-columns: 1fr;
+                margin: 0 10px 10px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
             }
         }
 
@@ -387,14 +601,15 @@
             background: var(--secondary);
             color: white;
             padding: 15px 25px;
-            border-radius: 6px;
+            border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
             gap: 10px;
             z-index: 1000;
             animation: slideIn 0.3s ease;
-            font-family: 'Mirza', sans-serif;
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            max-width: 350px;
         }
 
         @keyframes slideIn {
@@ -407,13 +622,13 @@
             background: linear-gradient(135deg, #fffbeb, #fef3c7);
             color: #92400e;
             padding: 15px;
-            border-radius: 6px;
+            border-radius: 8px;
             margin-bottom: 25px;
             border-right: 4px solid #f59e0b;
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            font-family: 'Mirza', sans-serif;
+            font-family: 'Noto Kufi Arabic', sans-serif;
         }
 
         .alert-box i {
@@ -441,14 +656,176 @@
             margin-top: 20px;
             padding: 15px;
             background: #f8f9fa;
-            border-radius: 6px;
+            border-radius: 8px;
             border: 1px dashed #dee2e6;
         }
 
         .info-title {
             color: var(--primary);
             margin-bottom: 10px;
-            font-size: 18px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* ميزات PWA */
+        .pwa-features {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .pwa-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .pwa-btn:hover {
+            transform: scale(1.1);
+            background: var(--secondary);
+        }
+
+        .pwa-menu {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 10px;
+            min-width: 200px;
+            display: none;
+        }
+
+        .pwa-menu.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pwa-menu-item {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .pwa-menu-item:hover {
+            background: #f1f5f9;
+        }
+
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--accent);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 1001;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* تحسينات للأجهزة الصغيرة جداً */
+        @media (max-width: 480px) {
+            .paper-container {
+                padding: 15px;
+            }
+            
+            .court-name {
+                font-size: 18px;
+            }
+            
+            .case-title {
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .section-heading {
+                font-size: 18px;
+            }
+        }
+
+        /* تحسينات للوضع المظلم */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light: #1e293b;
+                --dark: #f1f5f9;
+                --card-bg: #334155;
+                --border-color: #475569;
+                --paper: #475569;
+            }
+            
+            .form-control {
+                background: #475569;
+                color: white;
+                border-color: #64748b;
+            }
+            
+            .paper-container {
+                background: #475569;
+                color: white;
+                border-color: #64748b;
+            }
+            
+            .petition-content {
+                color: white;
+            }
         }
     </style>
 </head>
@@ -463,11 +840,20 @@
                         <p>نظام كتابة العرائض القانونية المتكامل</p>
                     </div>
                 </div>
-                <div style="color: #cbd5e0; font-size: 14px;">
-                    الإصدار 5.0 | تم التحديث: ديسمبر 2024
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchInput" placeholder="ابحث عن نموذج عريضة...">
+                    <i class="fas fa-search search-icon"></i>
                 </div>
             </div>
+            
+            <div class="petition-categories" id="categoriesContainer">
+                <!-- سيتم تعبئة التصنيفات بواسطة JavaScript -->
+            </div>
         </header>
+
+        <div class="templates-grid" id="templatesContainer">
+            <!-- سيتم تعبئة القوالب بواسطة JavaScript -->
+        </div>
 
         <div class="main-layout">
             <!-- Form Section -->
@@ -484,24 +870,12 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label required">نوع الدعوى</label>
-                    <select class="form-control" id="petitionType" onchange="loadTemplate()">
-                        <option value="">-- اختر نوع الدعوى --</option>
-                        <option value="noise">دعوى إخلاء للإزعاج العام</option>
-                        <option value="sublease">دعوى إخلاء للإيجار من الباطن</option>
-                        <option value="essential_changes">دعوى إخلاء لإجراء تغييرات جوهرية</option>
-                        <option value="new_owner">دعوى إخلاء للمالك الجديد</option>
-                        <option value="legal_lease_end">دعوى إخلاء لانتهاء الإيجار</option>
-                        <option value="rent_adjustment">دعوى أجرة المثل</option>
-                        <option value="partnership">دعوى فض شراكة</option>
-                        <option value="possession">دعوى إثبات حيازة</option>
-                        <option value="labor">دعوى عمل</option>
-                        <option value="financial1">دعوى مطالبة مالية (نموذج 1)</option>
-                    </select>
+                <div id="formFields">
+                    <p style="color: #64748b; text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-file-alt" style="font-size: 48px; color: #cbd5e0; margin-bottom: 15px;"></i><br>
+                        اختر نموذج عريضة من القائمة لبدء إدخال البيانات
+                    </p>
                 </div>
-
-                <div id="formFields"></div>
             </div>
 
             <!-- Preview Section -->
@@ -513,23 +887,10 @@
 
                 <div class="paper-container">
                     <div id="petitionPreview" class="petition-content">
-                        <div class="court-name">محكمة ........ الجزئية</div>
-                        <div class="case-number">رقم الدعوى: ............ / ........</div>
-                        <div class="case-title">دعوى ..............</div>
-                        
-                        <div class="parties-info">
-                            <p><strong>بين</strong></p>
-                            <p>المدعي: ................</p>
-                            <p>عنوان المدعي: ................</p>
-                            <p style="margin-top: 20px;"><strong>ضـد</strong></p>
-                            <p>المدعى عليه: ................</p>
-                            <p>عنوان المدعى عليه: ................</p>
-                        </div>
-                        
-                        <div class="petition-body">
-                            <p>السيد/ قاضي المحكمة الموقر،</p>
-                            <p>تحية طيبة وبعد،</p>
-                            <p>نقدم لسيادتكم هذه العريضة طالبين فيها ........</p>
+                        <div style="text-align: center; color: #64748b; padding: 100px 20px;">
+                            <i class="fas fa-file-alt" style="font-size: 64px; color: #e2e8f0; margin-bottom: 20px;"></i><br>
+                            <p style="font-size: 18px;">ستظهر هنا معاينة العريضة بعد تعبئة النموذج</p>
+                            <p style="font-size: 14px; margin-top: 10px;">تنسيق مشابه للورقة الأصلية</p>
                         </div>
                     </div>
                 </div>
@@ -544,12 +905,40 @@
             <button class="btn btn-success" onclick="exportToWord()">
                 <i class="fas fa-file-word"></i> تصدير Word
             </button>
+            <button class="btn btn-info" onclick="exportToPDF()">
+                <i class="fas fa-file-pdf"></i> تصدير PDF
+            </button>
             <button class="btn btn-warning" onclick="printPetition()">
                 <i class="fas fa-print"></i> طباعة مباشرة
             </button>
             <button class="btn btn-danger" onclick="resetForm()">
                 <i class="fas fa-trash"></i> مسح النموذج
             </button>
+        </div>
+
+        <!-- ميزات PWA -->
+        <div class="pwa-features">
+            <button class="pwa-btn" onclick="togglePWAMenu()">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="pwa-menu" id="pwaMenu">
+                <div class="pwa-menu-item" onclick="saveDraft()">
+                    <i class="fas fa-save"></i>
+                    <span>حفظ المسودة</span>
+                </div>
+                <div class="pwa-menu-item" onclick="loadDraft()">
+                    <i class="fas fa-folder-open"></i>
+                    <span>فتح مسودة</span>
+                </div>
+                <div class="pwa-menu-item" onclick="sharePetition()">
+                    <i class="fas fa-share-alt"></i>
+                    <span>مشاركة</span>
+                </div>
+                <div class="pwa-menu-item" onclick="toggleDarkMode()">
+                    <i class="fas fa-moon"></i>
+                    <span>الوضع المظلم</span>
+                </div>
+            </div>
         </div>
 
         <footer class="app-footer">
@@ -562,74 +951,355 @@
                     <p><i class="fas fa-phone"></i> للدعم الفني: 1234567890</p>
                     <p><i class="fas fa-envelope"></i> info@meelawfirm.com</p>
                 </div>
+                <div class="version">
+                    <p>الإصدار 5.0</p>
+                </div>
             </div>
         </footer>
     </div>
 
     <script>
-        // تعريف القوالب
+        // تعريف التصنيفات
+        const categories = [
+            { id: 'all', name: 'جميع العرائض', icon: 'fa-list' },
+            { id: 'civil', name: 'مدنية', icon: 'fa-balance-scale' },
+            { id: 'criminal', name: 'جنائية', icon: 'fa-gavel' },
+            { id: 'personal', name: 'أحوال شخصية', icon: 'fa-users' },
+            { id: 'commercial', name: 'تجارية', icon: 'fa-briefcase' },
+            { id: 'labor', name: 'عمل', icon: 'fa-user-tie' }
+        ];
+
+        // تعريف القوالب الكاملة مع جميع النماذج
         const templates = {
-            noise: {
+            // مدنية
+            'noise_complaint': {
                 name: 'دعوى إخلاء للإزعاج العام وأفعال منافية للآداب',
+                category: 'civil',
+                icon: 'fa-volume-up',
                 fields: [
-                    { id: 'court', label: 'اسم المحكمة', type: 'text', required: true },
-                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', required: true, placeholder: 'مثال: 123/2024' },
+                    { id: 'court', label: 'اسم المحكمة', type: 'text', required: true, placeholder: 'مثال: محكمة أمدرمان الجزئية' },
+                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', placeholder: 'اختياري - مثال: 123/2024' },
                     { id: 'plaintiff', label: 'اسم المدعي', type: 'text', required: true },
                     { id: 'plaintiffAddress', label: 'عنوان المدعي', type: 'text', required: true },
+                    { id: 'plaintiffPhone', label: 'رقم هاتف المدعي', type: 'tel', required: true },
                     { id: 'defendant', label: 'اسم المدعى عليه', type: 'text', required: true },
                     { id: 'defendantAddress', label: 'عنوان المدعى عليه', type: 'text', required: true },
+                    { id: 'defendantPhone', label: 'رقم هاتف المدعى عليه', type: 'tel', required: true },
                     { id: 'propertyNo', label: 'رقم العقار', type: 'text', required: true },
                     { id: 'area', label: 'المنطقة/الحي', type: 'text', required: true },
-                    { id: 'noiseDetails', label: 'تفاصيل الإزعاج', type: 'textarea', required: true },
+                    { id: 'noiseDetails', label: 'تفاصيل الإزعاج', type: 'textarea', required: true, placeholder: 'وصف مفصل للإزعاج والأفعال المنافية للآداب...' },
                     { id: 'demands', label: 'الطلبات', type: 'textarea', required: true, placeholder: 'مثال:\n1- إخلاء العقار\n2- المصاريف القانونية\n3- التعويض المالي' }
                 ]
             },
-            sublease: {
-                name: 'دعوى إخلاء للإيجار من الباطن',
+
+            // جنائية
+            'murder': {
+                name: 'دعوى قتل عمد',
+                category: 'criminal',
+                icon: 'fa-user-slash',
+                fields: [
+                    { id: 'prosecution', label: 'اسم النيابة', type: 'text', required: true },
+                    { id: 'reportNo', label: 'رقم البلاغ', type: 'text', required: true },
+                    { id: 'policeStation', label: 'قسم الشرطة', type: 'text', required: true },
+                    { id: 'complainant', label: 'اسم الشاكي', type: 'text', required: true },
+                    { id: 'complainantAddress', label: 'عنوان الشاكي', type: 'text', required: true },
+                    { id: 'complainantPhone', label: 'رقم هاتف الشاكي', type: 'tel', required: true },
+                    { id: 'accused', label: 'اسم المشكو ضده', type: 'text', required: true },
+                    { id: 'accusedAddress', label: 'عنوان المشكو ضده', type: 'text', required: true },
+                    { id: 'accusedPhone', label: 'رقم هاتف المشكو ضده', type: 'tel', required: true },
+                    { id: 'crimeDate', label: 'تاريخ الجريمة', type: 'date', required: true },
+                    { id: 'crimeLocation', label: 'مكان الجريمة', type: 'text', required: true },
+                    { id: 'crimeDetails', label: 'تفاصيل الجريمة', type: 'textarea', required: true },
+                    { id: 'weapon', label: 'أداة الجريمة', type: 'text', required: true },
+                    { id: 'relationship', label: 'العلاقة بين الطرفين', type: 'text', required: true }
+                ]
+            },
+
+            // أحوال شخصية
+            'child_custody': {
+                name: 'دعوى رؤية واصطحاب محضون',
+                category: 'personal',
+                icon: 'fa-child',
+                fields: [
+                    { id: 'court', label: 'المحكمة الشرعية', type: 'text', required: true },
+                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', placeholder: 'اختياري' },
+                    { id: 'plaintiff', label: 'اسم المدعي (الأب)', type: 'text', required: true },
+                    { id: 'plaintiffAddress', label: 'عنوان المدعي', type: 'text', required: true },
+                    { id: 'plaintiffPhone', label: 'رقم هاتف المدعي', type: 'tel', required: true },
+                    { id: 'defendant', label: 'اسم المدعى عليها (الأم)', type: 'text', required: true },
+                    { id: 'defendantAddress', label: 'عنوان المدعى عليها', type: 'text', required: true },
+                    { id: 'defendantPhone', label: 'رقم هاتف المدعى عليها', type: 'tel', required: true },
+                    { id: 'childName', label: 'اسم المحضون', type: 'text', required: true },
+                    { id: 'childAge', label: 'عمر المحضون', type: 'text', required: true },
+                    { id: 'divorceDate', label: 'تاريخ الطلاق', type: 'date', required: true },
+                    { id: 'visitDetails', label: 'تفاصيل طلب الرؤية والاصطحاب', type: 'textarea', required: true },
+                    { id: 'demands', label: 'الطلبات', type: 'textarea', required: true }
+                ]
+            },
+
+            // مزيد من النماذج - سيتم إضافة الباقي...
+            'maintenance': {
+                name: 'دعوى نفقة زوجية',
+                category: 'personal',
+                icon: 'fa-hand-holding-usd',
+                fields: [
+                    { id: 'court', label: 'المحكمة الشرعية', type: 'text', required: true },
+                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', placeholder: 'اختياري' },
+                    { id: 'plaintiff', label: 'اسم المدعية (الزوجة)', type: 'text', required: true },
+                    { id: 'plaintiffAddress', label: 'عنوان المدعية', type: 'text', required: true },
+                    { id: 'plaintiffPhone', label: 'رقم هاتف المدعية', type: 'tel', required: true },
+                    { id: 'defendant', label: 'اسم المدعى عليه (الزوج)', type: 'text', required: true },
+                    { id: 'defendantAddress', label: 'عنوان المدعى عليه', type: 'text', required: true },
+                    { id: 'defendantPhone', label: 'رقم هاتف المدعى عليه', type: 'tel', required: true },
+                    { id: 'marriageDate', label: 'تاريخ الزواج', type: 'date', required: true },
+                    { id: 'maintenanceStoppedDate', label: 'تاريخ توقف النفقة', type: 'date', required: true },
+                    { id: 'husbandJob', label: 'عمل الزوج', type: 'text', required: true },
+                    { id: 'monthlyAmount', label: 'المبلغ الشهري المطلوب', type: 'text', required: true },
+                    { id: 'clothingAmount', label: 'بدل الكسوة كل 6 أشهر', type: 'text', required: true },
+                    { id: 'details', label: 'تفاصيل إضافية', type: 'textarea' }
+                ]
+            },
+
+            'divorce_harm': {
+                name: 'دعوى طلاق للضرر',
+                category: 'personal',
+                icon: 'fa-heart-broken',
+                fields: [
+                    { id: 'court', label: 'المحكمة الشرعية', type: 'text', required: true },
+                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', placeholder: 'اختياري' },
+                    { id: 'plaintiff', label: 'اسم المدعية', type: 'text', required: true },
+                    { id: 'plaintiffAddress', label: 'عنوان المدعية', type: 'text', required: true },
+                    { id: 'plaintiffPhone', label: 'رقم هاتف المدعية', type: 'tel', required: true },
+                    { id: 'defendant', label: 'اسم المدعى عليه', type: 'text', required: true },
+                    { id: 'defendantAddress', label: 'عنوان المدعى عليه', type: 'text', required: true },
+                    { id: 'defendantPhone', label: 'رقم هاتف المدعى عليه', type: 'tel', required: true },
+                    { id: 'harmDate', label: 'تاريخ الضرر', type: 'date', required: true },
+                    { id: 'harmLocation', label: 'مكان الضرر', type: 'text', required: true },
+                    { id: 'harmType', label: 'نوع الضرر', type: 'text', required: true },
+                    { id: 'harmDetails', label: 'تفاصيل الضرر', type: 'textarea', required: true },
+                    { id: 'attemptedReconciliation', label: 'محاولات الصلح', type: 'textarea' }
+                ]
+            },
+
+            // يمكن إضافة باقي النماذج بنفس الطريقة...
+            // سيتم إضافة حوالي 30 نموذج آخر هنا
+        };
+
+        // تعريف القوالب الإضافية
+        const additionalTemplates = {
+            // نموذج عريضة دعوى اخلاء للإزعاج العام وافعال منافيه للآداب
+            'eviction_noise': {
+                name: 'دعوى إخلاء للإزعاج العام وأفعال منافية للآداب',
+                category: 'civil',
+                icon: 'fa-volume-mute',
                 fields: [
                     { id: 'court', label: 'اسم المحكمة', type: 'text', required: true },
-                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', required: true },
+                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', placeholder: 'اختياري' },
                     { id: 'plaintiff', label: 'اسم المدعي (المالك)', type: 'text', required: true },
                     { id: 'plaintiffAddress', label: 'عنوان المدعي', type: 'text', required: true },
+                    { id: 'plaintiffPhone', label: 'رقم هاتف المدعي', type: 'tel', required: true },
+                    { id: 'defendant', label: 'اسم المدعى عليه (المستأجر)', type: 'text', required: true },
+                    { id: 'defendantAddress', label: 'عنوان المدعى عليه', type: 'text', required: true },
+                    { id: 'defendantPhone', label: 'رقم هاتف المدعى عليه', type: 'tel', required: true },
+                    { id: 'propertyNo', label: 'رقم العقار', type: 'text', required: true },
+                    { id: 'area', label: 'المنطقة/الحي', type: 'text', required: true },
+                    { id: 'noiseDetails', label: 'تفاصيل الإزعاج والأفعال المنافية للآداب', type: 'textarea', required: true },
+                    { id: 'notificationDate', label: 'تاريخ الإنذار', type: 'date', required: true },
+                    { id: 'demands', label: 'الطلبات', type: 'textarea', required: true }
+                ]
+            },
+
+            // باقي النماذج يمكن إضافتها هنا...
+            'sublease_eviction': {
+                name: 'دعوى إخلاء للإيجار من الباطن',
+                category: 'civil',
+                icon: 'fa-building',
+                fields: [
+                    { id: 'court', label: 'اسم المحكمة', type: 'text', required: true },
+                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', placeholder: 'اختياري' },
+                    { id: 'plaintiff', label: 'اسم المدعي (المالك)', type: 'text', required: true },
+                    { id: 'plaintiffAddress', label: 'عنوان المدعي', type: 'text', required: true },
+                    { id: 'plaintiffPhone', label: 'رقم هاتف المدعي', type: 'tel', required: true },
                     { id: 'defendant1', label: 'المدعى عليه الأول (المستأجر الأصلي)', type: 'text', required: true },
                     { id: 'defendant1Address', label: 'عنوان المدعى عليه الأول', type: 'text', required: true },
+                    { id: 'defendant1Phone', label: 'رقم هاتف المدعى عليه الأول', type: 'tel', required: true },
                     { id: 'defendant2', label: 'المدعى عليه الثاني (المستأجر من الباطن)', type: 'text' },
                     { id: 'defendant2Address', label: 'عنوان المدعى عليه الثاني', type: 'text' },
+                    { id: 'defendant2Phone', label: 'رقم هاتف المدعى عليه الثاني', type: 'tel' },
                     { id: 'propertyNo', label: 'رقم العقار', type: 'text', required: true },
                     { id: 'area', label: 'المنطقة/الحي', type: 'text', required: true },
                     { id: 'rentAmount', label: 'قيمة الإيجار الشهري', type: 'text', required: true },
+                    { id: 'contractDetails', label: 'تفاصيل مخالفة عقد الإيجار', type: 'textarea', required: true },
+                    { id: 'demands', label: 'الطلبات', type: 'textarea', required: true }
+                ]
+            },
+
+            'urgent_need_eviction': {
+                name: 'دعوى إخلاء للحاجة الماسة',
+                category: 'civil',
+                icon: 'fa-home',
+                fields: [
+                    { id: 'court', label: 'اسم المحكمة', type: 'text', required: true },
+                    { id: 'caseNo', label: 'رقم الدعوى', type: 'text', placeholder: 'اختياري' },
+                    { id: 'plaintiff', label: 'اسم المدعي (المالك)', type: 'text', required: true },
+                    { id: 'plaintiffAddress', label: 'عنوان المدعي', type: 'text', required: true },
+                    { id: 'plaintiffPhone', label: 'رقم هاتف المدعي', type: 'tel', required: true },
+                    { id: 'defendant', label: 'اسم المدعى عليه (المستأجر)', type: 'text', required: true },
+                    { id: 'defendantAddress', label: 'عنوان المدعى عليه', type: 'text', required: true },
+                    { id: 'defendantPhone', label: 'رقم هاتف المدعى عليه', type: 'tel', required: true },
+                    { id: 'propertyNo', label: 'رقم العقار', type: 'text', required: true },
+                    { id: 'area', label: 'المنطقة/الحي', type: 'text', required: true },
+                    { id: 'rentAmount', label: 'قيمة الإيجار الشهري', type: 'text', required: true },
+                    { id: 'needDetails', label: 'تفاصيل الحاجة الماسة', type: 'textarea', required: true },
+                    { id: 'currentLivingStatus', label: 'الوضع السكني الحالي للمدعي', type: 'textarea', required: true },
                     { id: 'demands', label: 'الطلبات', type: 'textarea', required: true }
                 ]
             }
         };
 
-        // تحميل القالب
-        function loadTemplate() {
-            const type = document.getElementById('petitionType').value;
+        // دمج جميع القوالب
+        const allTemplates = { ...templates, ...additionalTemplates };
+
+        let currentTemplateId = '';
+        let currentCategory = 'all';
+
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+            loadTemplates();
+            setupSearch();
+            setupPWA();
+            
+            // عرض رسالة ترحيب
+            setTimeout(() => {
+                showToast('مرحباً بك في نظام MEELAWFIRM لكتابة العرائض القانونية', 'info');
+            }, 1000);
+        });
+
+        // تحميل التصنيفات
+        function loadCategories() {
+            const container = document.getElementById('categoriesContainer');
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = `category-btn ${category.id === 'all' ? 'active' : ''}`;
+                button.innerHTML = `<i class="fas ${category.icon}"></i> ${category.name}`;
+                button.onclick = () => filterTemplates(category.id);
+                container.appendChild(button);
+            });
+        }
+
+        // تحميل القوالب
+        function loadTemplates() {
+            const container = document.getElementById('templatesContainer');
+            container.innerHTML = '';
+            
+            Object.keys(allTemplates).forEach(templateId => {
+                const template = allTemplates[templateId];
+                
+                // تصفية حسب التصنيف
+                if (currentCategory !== 'all' && template.category !== currentCategory) {
+                    return;
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'template-card';
+                card.dataset.id = templateId;
+                card.onclick = () => selectTemplate(templateId);
+                
+                card.innerHTML = `
+                    <div class="template-icon">
+                        <i class="fas ${template.icon}"></i>
+                    </div>
+                    <div class="template-title">${template.name}</div>
+                    <div class="template-category">${getCategoryName(template.category)}</div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // تصفية القوالب حسب التصنيف
+        function filterTemplates(categoryId) {
+            currentCategory = categoryId;
+            
+            // تحديد الأزرار النشطة
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            loadTemplates();
+        }
+
+        // الحصول على اسم التصنيف
+        function getCategoryName(categoryId) {
+            const category = categories.find(cat => cat.id === categoryId);
+            return category ? category.name : categoryId;
+        }
+
+        // إعداد البحث
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const cards = document.querySelectorAll('.template-card');
+                
+                cards.forEach(card => {
+                    const title = card.querySelector('.template-title').textContent.toLowerCase();
+                    const category = card.querySelector('.template-category').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || category.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // اختيار قالب
+        function selectTemplate(templateId) {
+            currentTemplateId = templateId;
+            
+            // تحديد البطاقة النشطة
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // تحميل النموذج
+            loadTemplateForm(templateId);
+        }
+
+        // تحميل نموذج القالب
+        function loadTemplateForm(templateId) {
+            const template = allTemplates[templateId];
             const formFields = document.getElementById('formFields');
             
-            if (!type) {
-                formFields.innerHTML = '';
+            if (!template) {
+                formFields.innerHTML = '<p style="color: var(--accent); text-align: center;">خطأ: لم يتم العثور على القالب المحدد</p>';
                 return;
             }
             
-            const template = templates[type] || templates.noise;
-            
-            let html = `<h3 style="color: var(--primary); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0;">${template.name}</h3>`;
+            let html = `
+                <h3 style="color: var(--primary); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color);">
+                    <i class="fas ${template.icon}"></i> ${template.name}
+                </h3>
+            `;
             
             template.fields.forEach(field => {
                 html += `
                     <div class="form-group">
                         <label class="form-label ${field.required ? 'required' : ''}">${field.label}</label>
                         ${field.type === 'textarea' ? 
-                            `<textarea class="form-control" id="${field.id}" rows="4" placeholder="${field.placeholder || 'أدخل ' + field.label}" ${field.required ? 'required' : ''}></textarea>` :
-                            `<input type="${field.type}" class="form-control" id="${field.id}" placeholder="${field.placeholder || 'أدخل ' + field.label}" ${field.required ? 'required' : ''}>`
+                            `<textarea class="form-control" id="${field.id}" rows="4" placeholder="${field.placeholder || ''}" ${field.required ? 'required' : ''}></textarea>` :
+                            `<input type="${field.type}" class="form-control" id="${field.id}" placeholder="${field.placeholder || ''}" ${field.required ? 'required' : ''}>`
                         }
                     </div>
                 `;
             });
             
-            // إضافة حقول الشهود
+            // إضافة حقول الشهود (اختياري)
             html += `
                 <div class="additional-info">
                     <div class="info-title">
@@ -669,17 +1339,35 @@
             `;
             
             formFields.innerHTML = html;
+            
+            // إضافة تأثيرات للحقول
+            setupFormEffects();
+        }
+
+        // إعداد تأثيرات الحقول
+        function setupFormEffects() {
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = 'var(--secondary)';
+                    this.style.boxShadow = '0 0 0 3px rgba(45, 106, 79, 0.1)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.borderColor = '#e2e8f0';
+                    this.style.boxShadow = 'none';
+                });
+            });
         }
 
         // إنشاء العريضة
         function generatePetition() {
-            const type = document.getElementById('petitionType').value;
-            if (!type) {
-                showToast('يرجى اختيار نوع الدعوى أولاً', 'error');
+            if (!currentTemplateId) {
+                showToast('يرجى اختيار نموذج عريضة أولاً', 'error');
                 return;
             }
             
-            const template = templates[type] || templates.noise;
+            const template = allTemplates[currentTemplateId];
             let isValid = true;
             let missingFields = [];
             
@@ -704,174 +1392,315 @@
                 return;
             }
             
-            let petitionHTML = '';
-            
-            switch(type) {
-                case 'noise':
-                    const court = document.getElementById('court').value;
-                    const caseNo = document.getElementById('caseNo').value;
-                    const plaintiff = document.getElementById('plaintiff').value;
-                    const plaintiffAddress = document.getElementById('plaintiffAddress').value;
-                    const defendant = document.getElementById('defendant').value;
-                    const defendantAddress = document.getElementById('defendantAddress').value;
-                    const propertyNo = document.getElementById('propertyNo').value;
-                    const area = document.getElementById('area').value;
-                    const noiseDetails = document.getElementById('noiseDetails').value;
-                    const demands = document.getElementById('demands').value;
-                    
-                    petitionHTML = `
-                        <div class="court-name">محكمة ${court} الجزئية</div>
-                        <div class="case-number">رقم الدعوى: ${caseNo}</div>
-                        <div class="case-title">دعوى إخلاء للإزعاج العام وأفعال منافية للآداب</div>
-                        
-                        <div class="parties-info">
-                            <p><strong>بين</strong></p>
-                            <p>المدعي: ${plaintiff}</p>
-                            <p>عنوان المدعي: ${plaintiffAddress}</p>
-                            <p style="margin-top: 20px;"><strong>ضـد</strong></p>
-                            <p>المدعى عليه: ${defendant}</p>
-                            <p>عنوان المدعى عليه: ${defendantAddress}</p>
-                        </div>
-                        
-                        <div class="petition-body">
-                            <p>السيد/ قاضي محكمة ${court} الجزئية المحترم،</p>
-                            <p>تحية طيبة وبعد،</p>
-                            <p>نقدم لسيادتكم هذه العريضة طالبين فيها ما يلي:</p>
-                            
-                            <p style="margin-top: 20px; text-align: right; padding-right: 20px;">
-                                <strong>أولاً:</strong> المدعى عليه يستأجر العقار رقم ${propertyNo} في منطقة ${area}.
-                            </p>
-                            <p style="text-align: right; padding-right: 20px;">
-                                <strong>ثانياً:</strong> المدعي هو جار للمدعى عليه وقد قام المدعى عليه بما يلي:
-                            </p>
-                            <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${noiseDetails}</p>
-                            <p style="text-align: right; padding-right: 20px;">
-                                <strong>ثالثاً:</strong> تم إنذار المدعى عليه كتابياً بتاريخ ${new Date().toLocaleDateString('ar-SA')} ولكن لم يستجب.
-                            </p>
-                            
-                            <div class="prayer-section">
-                                <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
-                                <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${demands}</p>
-                            </div>
-                        </div>
-                        
-                        <div style="text-align: center; margin: 40px 0;">
-                            <p style="font-size: 20px; font-weight: bold;">والله ولي التوفيق</p>
-                        </div>
-                        
-                        <div class="signature-section">
-                            <p>مقدم العريضة</p>
-                            <p>${plaintiff}</p>
-                            <div class="signature-line"></div>
-                            <p style="margin-top: 5px; font-size: 14px;">التوقيع</p>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'sublease':
-                    const court2 = document.getElementById('court').value;
-                    const caseNo2 = document.getElementById('caseNo').value;
-                    const plaintiff2 = document.getElementById('plaintiff').value;
-                    const plaintiffAddress2 = document.getElementById('plaintiffAddress').value;
-                    const defendant1 = document.getElementById('defendant1').value;
-                    const defendant1Address = document.getElementById('defendant1Address').value;
-                    const defendant2 = document.getElementById('defendant2')?.value || '';
-                    const defendant2Address = document.getElementById('defendant2Address')?.value || '';
-                    const propertyNo2 = document.getElementById('propertyNo').value;
-                    const area2 = document.getElementById('area').value;
-                    const rentAmount = document.getElementById('rentAmount').value;
-                    const demands2 = document.getElementById('demands').value;
-                    
-                    petitionHTML = `
-                        <div class="court-name">محكمة ${court2} الجزئية</div>
-                        <div class="case-number">رقم الدعوى: ${caseNo2}</div>
-                        <div class="case-title">دعوى إخلاء للإيجار من الباطن</div>
-                        
-                        <div class="parties-info">
-                            <p><strong>بين</strong></p>
-                            <p>المدعي: ${plaintiff2}</p>
-                            <p>عنوان المدعي: ${plaintiffAddress2}</p>
-                            <p style="margin-top: 20px;"><strong>ضـد</strong></p>
-                            <p>1- المدعى عليه الأول: ${defendant1}</p>
-                            <p>عنوانه: ${defendant1Address}</p>
-                            ${defendant2 ? `<p>2- المدعى عليه الثاني: ${defendant2}</p><p>عنوانه: ${defendant2Address}</p>` : ''}
-                        </div>
-                        
-                        <div class="petition-body">
-                            <p>السيد/ قاضي محكمة ${court2} الجزئية المحترم،</p>
-                            <p>تحية طيبة وبعد،</p>
-                            <p>نقدم لسيادتكم هذه العريضة طالبين فيها ما يلي:</p>
-                            
-                            <p style="margin-top: 20px; text-align: right; padding-right: 20px;">
-                                <strong>أولاً:</strong> المدعي هو المالك للعقار رقم ${propertyNo2} في منطقة ${area2}.
-                            </p>
-                            <p style="text-align: right; padding-right: 20px;">
-                                <strong>ثانياً:</strong> المدعى عليه الأول يستأجر العقار المذكور بأجرة شهرية قدرها ${rentAmount} جنيه.
-                            </p>
-                            <p style="text-align: right; padding-right: 20px;">
-                                <strong>ثالثاً:</strong> قام المدعى عليه الأول بإيجار العقار للمدعى عليه الثاني من الباطن دون علم أو موافقة المدعي، وذلك مخالف لشروط عقد الإيجار.
-                            </p>
-                            
-                            <div class="prayer-section">
-                                <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
-                                <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${demands2}</p>
-                            </div>
-                        </div>
-                        
-                        <div style="text-align: center; margin: 40px 0;">
-                            <p style="font-size: 20px; font-weight: bold;">والله ولي التوفيق</p>
-                        </div>
-                        
-                        <div class="signature-section">
-                            <p>مقدم العريضة</p>
-                            <p>${plaintiff2}</p>
-                            <div class="signature-line"></div>
-                            <p style="margin-top: 5px; font-size: 14px;">التوقيع</p>
-                        </div>
-                    `;
-                    break;
-            }
-            
-            // إضافة الشهود إن وجدوا
-            const witness1 = document.getElementById('witness1')?.value;
-            const witness2 = document.getElementById('witness2')?.value;
-            const witness1Id = document.getElementById('witness1Id')?.value;
-            const witness2Id = document.getElementById('witness2Id')?.value;
-            
-            if (witness1 || witness2) {
-                petitionHTML += `
-                    <div class="witness-section">
-                        <p style="font-weight: bold; margin-bottom: 15px;">الشهود:</p>
-                        ${witness1 ? `<div class="witness-item"><p>1- ${witness1}${witness1Id ? ' - هوية: ' + witness1Id : ''}</p></div>` : ''}
-                        ${witness2 ? `<div class="witness-item"><p>2- ${witness2}${witness2Id ? ' - هوية: ' + witness2Id : ''}</p></div>` : ''}
-                    </div>
-                `;
-            }
-            
-            // إضافة الملاحظات الإضافية
-            const additionalNotes = document.getElementById('additionalNotes').value;
-            if (additionalNotes) {
-                petitionHTML += `
-                    <div style="margin-top: 30px; padding: 15px; border-top: 1px solid #ddd;">
-                        <p style="font-weight: bold;">ملاحظات إضافية:</p>
-                        <p style="white-space: pre-line;">${additionalNotes}</p>
-                    </div>
-                `;
-            }
+            // بناء العريضة حسب النموذج
+            let petitionHTML = buildPetitionHTML();
             
             document.getElementById('petitionPreview').innerHTML = petitionHTML;
             showToast('تم إنشاء العريضة بنجاح ✓', 'success');
         }
 
+        // بناء HTML العريضة
+        function buildPetitionHTML() {
+            const template = allTemplates[currentTemplateId];
+            let html = '';
+            
+            switch(currentTemplateId) {
+                case 'noise_complaint':
+                    html = buildNoiseComplaint();
+                    break;
+                case 'murder':
+                    html = buildMurderComplaint();
+                    break;
+                case 'child_custody':
+                    html = buildChildCustody();
+                    break;
+                case 'maintenance':
+                    html = buildMaintenance();
+                    break;
+                case 'divorce_harm':
+                    html = buildDivorceHarm();
+                    break;
+                default:
+                    html = buildGenericPetition();
+            }
+            
+            return html;
+        }
+
+        // بناء نموذج شكوى الإزعاج
+        function buildNoiseComplaint() {
+            const court = document.getElementById('court').value || '............';
+            const caseNo = document.getElementById('caseNo').value || '............ / ........';
+            const plaintiff = document.getElementById('plaintiff').value || '................';
+            const plaintiffAddress = document.getElementById('plaintiffAddress').value || '................';
+            const defendant = document.getElementById('defendant').value || '................';
+            const defendantAddress = document.getElementById('defendantAddress').value || '................';
+            const propertyNo = document.getElementById('propertyNo').value || '..........';
+            const area = document.getElementById('area').value || '..........';
+            const noiseDetails = document.getElementById('noiseDetails').value || '................';
+            const demands = document.getElementById('demands').value || '................';
+            
+            return `
+                <div class="court-name">${court}</div>
+                <div class="case-number">رقم الدعوى: ${caseNo}</div>
+                <div class="case-title">دعوى إخلاء للإزعاج العام وأفعال منافية للآداب</div>
+                
+                <div class="parties-info">
+                    <p><strong>بين</strong></p>
+                    <p>المدعي: ${plaintiff}</p>
+                    <p>عنوان المدعي: ${plaintiffAddress}</p>
+                    <p>رقم هاتف المدعي: ${document.getElementById('plaintiffPhone').value || '................'}</p>
+                    <p style="margin-top: 20px;"><strong>ضـد</strong></p>
+                    <p>المدعى عليه: ${defendant}</p>
+                    <p>عنوان المدعى عليه: ${defendantAddress}</p>
+                    <p>رقم هاتف المدعى عليه: ${document.getElementById('defendantPhone').value || '................'}</p>
+                </div>
+                
+                <div class="petition-body">
+                    <p>السيد/ قاضي ${court} المحترم،</p>
+                    <p>تحية طيبة وبعد،</p>
+                    <p>نقدم لسيادتكم هذه العريضة طالبين فيها ما يلي:</p>
+                    
+                    <p style="margin-top: 20px; text-align: right; padding-right: 20px;">
+                        <strong>أولاً:</strong> المدعى عليه يستأجر العقار رقم ${propertyNo} في منطقة ${area}.
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثانياً:</strong> المدعي هو جار للمدعى عليه وقد قام المدعى عليه بما يلي:
+                    </p>
+                    <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${noiseDetails}</p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثالثاً:</strong> تم إنذار المدعى عليه كتابياً بتاريخ ${new Date().toLocaleDateString('ar-SA')} ولكن لم يستجب.
+                    </p>
+                    
+                    <div class="prayer-section">
+                        <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
+                        <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${demands}</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                    <p style="font-size: 20px; font-weight: bold;">والله ولي التوفيق</p>
+                </div>
+                
+                <div class="signature-section">
+                    <p>مقدم العريضة</p>
+                    <p>${plaintiff}</p>
+                    <div class="signature-line"></div>
+                    <p style="margin-top: 5px; font-size: 14px;">التوقيع</p>
+                </div>
+            `;
+        }
+
+        // بناء نموذج شكوى القتل
+        function buildMurderComplaint() {
+            const prosecution = document.getElementById('prosecution').value || '................';
+            const reportNo = document.getElementById('reportNo').value || '................';
+            const policeStation = document.getElementById('policeStation').value || '................';
+            const complainant = document.getElementById('complainant').value || '................';
+            const accused = document.getElementById('accused').value || '................';
+            const crimeDetails = document.getElementById('crimeDetails').value || '................';
+            
+            return `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="font-size: 20px; font-weight: bold;">${prosecution}</div>
+                    <div style="font-size: 16px; margin-top: 10px;">بلاغ / ${reportNo} / ${new Date().getFullYear()}</div>
+                    <div style="font-size: 16px; margin-top: 5px;">قسم شرطة ${policeStation}</div>
+                </div>
+                
+                <div class="case-title">بلاغ تحت نص المادة (130) من القانون الجنائي لسنة 1991</div>
+                
+                <div class="parties-info">
+                    <p><strong>بين</strong></p>
+                    <p>الشاكي: ${complainant}</p>
+                    <p>عنوان الشاكي: ${document.getElementById('complainantAddress').value || '................'}</p>
+                    <p style="margin-top: 20px;"><strong>ضـد</strong></p>
+                    <p>المشكو ضده: ${accused}</p>
+                    <p>عنوان المشكو ضده: ${document.getElementById('accusedAddress').value || '................'}</p>
+                </div>
+                
+                <div class="petition-body">
+                    <p>السيد/ وكيل نيابة ${prosecution} المحترم،</p>
+                    <p>تحية طيبة وبعد،</p>
+                    <p>نقدم لسيادتكم هذا البلاغ طالبين فيه ما يلي:</p>
+                    
+                    <p style="margin-top: 20px; text-align: right; padding-right: 20px;">
+                        <strong>أولاً:</strong> العلاقة بين الشاكي والمتهم: ${document.getElementById('relationship').value || '................'}
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثانياً:</strong> وقائع البلاغ:
+                    </p>
+                    <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${crimeDetails}</p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثالثاً:</strong> تاريخ الجريمة: ${document.getElementById('crimeDate').value || '................'}
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>رابعاً:</strong> مكان الجريمة: ${document.getElementById('crimeLocation').value || '................'}
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>خامساً:</strong> أداة الجريمة: ${document.getElementById('weapon').value || '................'}
+                    </p>
+                    
+                    <div class="prayer-section">
+                        <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم:</p>
+                        <p style="text-align: right; padding-right: 40px;">
+                            1- فتح بلاغ في مواجهة المشكو ضده تحت نص المادة (130) من القانون الجنائي<br>
+                            2- إصدار أمر قبض في مواجهة المشكو ضده وعدم إخلاء سبيله نهائياً<br>
+                            3- القصاص والدية كاملة لأولياء دم المجني عليه
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="signature-section">
+                    <p>مقدم العريضة</p>
+                    <p>${complainant}</p>
+                    <div class="signature-line"></div>
+                    <p style="margin-top: 5px; font-size: 14px;">التوقيع</p>
+                </div>
+            `;
+        }
+
+        // بناء نموذج رؤية المحضون
+        function buildChildCustody() {
+            const court = document.getElementById('court').value || '................';
+            const plaintiff = document.getElementById('plaintiff').value || '................';
+            const defendant = document.getElementById('defendant').value || '................';
+            const childName = document.getElementById('childName').value || '................';
+            const childAge = document.getElementById('childAge').value || '................';
+            const visitDetails = document.getElementById('visitDetails').value || '................';
+            
+            return `
+                <div class="court-name">${court}</div>
+                <div class="case-number">رقم الدعوى: ${document.getElementById('caseNo').value || '............ / ........'}</div>
+                <div class="case-title">دعوى رؤية واصطحاب محضون</div>
+                
+                <div class="parties-info">
+                    <p><strong>بين</strong></p>
+                    <p>المدعي: ${plaintiff}</p>
+                    <p>عنوان المدعي: ${document.getElementById('plaintiffAddress').value || '................'}</p>
+                    <p>رقم هاتف المدعي: ${document.getElementById('plaintiffPhone').value || '................'}</p>
+                    <p style="margin-top: 20px;"><strong>ضـد</strong></p>
+                    <p>المدعى عليها: ${defendant}</p>
+                    <p>عنوان المدعى عليها: ${document.getElementById('defendantAddress').value || '................'}</p>
+                    <p>رقم هاتف المدعى عليها: ${document.getElementById('defendantPhone').value || '................'}</p>
+                </div>
+                
+                <div class="petition-body">
+                    <p>السيد/ قاضي ${court} المحترم،</p>
+                    <p>تحية طيبة وبعد،</p>
+                    <p>نقدم لسيادتكم هذه العريضة طالبين فيها ما يلي:</p>
+                    
+                    <p style="margin-top: 20px; text-align: right; padding-right: 20px;">
+                        <strong>أولاً:</strong> المدعى عليها كانت زوجة شرعية للمدعي وقد طلقها بتاريخ ${document.getElementById('divorceDate').value || '................'}
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثانياً:</strong> المدعي رزق من المدعى عليها على فراش الزوجية الصحيح بابنته منها (${childName}) وعمرها (${childAge}) وهي بيدها للحضانة.
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثالثاً:</strong> المدعى عليها تقطن مع أهلها بالمحضون وقد حدثت خلافات بينه وبين أهلها حالت دون رؤيته لابنته.
+                    </p>
+                    
+                    <div class="prayer-section">
+                        <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
+                        <p style="text-align: right; padding-right: 40px; white-space: pre-line;">${visitDetails}</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                    <p style="font-size: 20px; font-weight: bold;">والله ولي التوفيق</p>
+                </div>
+                
+                <div class="signature-section">
+                    <p>مقدم العريضة</p>
+                    <p>${plaintiff}</p>
+                    <div class="signature-line"></div>
+                    <p style="margin-top: 5px; font-size: 14px;">التوقيع</p>
+                </div>
+            `;
+        }
+
+        // بناء نموذج عام
+        function buildGenericPetition() {
+            const template = allTemplates[currentTemplateId];
+            let html = `
+                <div class="court-name">${document.getElementById('court')?.value || 'محكمة ........ الجزئية'}</div>
+                <div class="case-number">رقم الدعوى: ${document.getElementById('caseNo')?.value || '............ / ........'}</div>
+                <div class="case-title">${template.name}</div>
+            `;
+            
+            // إضافة بيانات الأطراف
+            const plaintiff = document.getElementById('plaintiff')?.value || '................';
+            const defendant = document.getElementById('defendant')?.value || document.getElementById('defendant1')?.value || '................';
+            
+            html += `
+                <div class="parties-info">
+                    <p><strong>بين</strong></p>
+                    <p>المدعي: ${plaintiff}</p>
+                    <p>عنوان المدعي: ${document.getElementById('plaintiffAddress')?.value || '................'}</p>
+                    <p>رقم هاتف المدعي: ${document.getElementById('plaintiffPhone')?.value || '................'}</p>
+                    <p style="margin-top: 20px;"><strong>ضـد</strong></p>
+                    <p>المدعى عليه: ${defendant}</p>
+                    <p>عنوان المدعى عليه: ${document.getElementById('defendantAddress')?.value || document.getElementById('defendant1Address')?.value || '................'}</p>
+                    <p>رقم هاتف المدعى عليه: ${document.getElementById('defendantPhone')?.value || document.getElementById('defendant1Phone')?.value || '................'}</p>
+                </div>
+            `;
+            
+            // بناء نص العريضة من الحقول
+            html += `<div class="petition-body">`;
+            html += `<p>السيد/ قاضي ${document.getElementById('court')?.value || 'المحكمة'} المحترم،</p>`;
+            html += `<p>تحية طيبة وبعد،</p>`;
+            html += `<p>نقدم لسيادتكم هذه العريضة طالبين فيها ما يلي:</p>`;
+            
+            // إضافة الحقول كنقاط
+            template.fields.forEach((field, index) => {
+                if (field.id !== 'court' && field.id !== 'caseNo' && 
+                    field.id !== 'plaintiff' && field.id !== 'plaintiffAddress' && 
+                    field.id !== 'plaintiffPhone' && field.id !== 'defendant' && 
+                    field.id !== 'defendantAddress' && field.id !== 'defendantPhone' &&
+                    !field.id.includes('defendant2') && !field.id.includes('defendant1')) {
+                    
+                    const value = document.getElementById(field.id)?.value || '................';
+                    if (value && value !== '................') {
+                        html += `<p style="text-align: right; padding-right: 20px; margin-top: 10px;">
+                            <strong>${index === 0 ? 'أولاً:' : index === 1 ? 'ثانياً:' : index === 2 ? 'ثالثاً:' : index === 3 ? 'رابعاً:' : 'خامساً:'}</strong> ${value}
+                        </p>`;
+                    }
+                }
+            });
+            
+            html += `</div>`;
+            
+            // إضافة القسم الختامي
+            html += `
+                <div class="prayer-section">
+                    <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
+                    <p style="text-align: right; padding-right: 40px; white-space: pre-line;">
+                        ${document.getElementById('demands')?.value || '................'}
+                    </p>
+                </div>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                    <p style="font-size: 20px; font-weight: bold;">والله ولي التوفيق</p>
+                </div>
+                
+                <div class="signature-section">
+                    <p>مقدم العريضة</p>
+                    <p>${plaintiff}</p>
+                    <div class="signature-line"></div>
+                    <p style="margin-top: 5px; font-size: 14px;">التوقيع</p>
+                </div>
+            `;
+            
+            return html;
+        }
+
         // تصدير إلى Word
         function exportToWord() {
             const content = document.getElementById('petitionPreview').innerHTML;
-            if (!content || content.includes('سيظهر محتوى العريضة')) {
+            if (!content || content.includes('ستظهر هنا معاينة')) {
                 showToast('يرجى إنشاء العريضة أولاً', 'error');
                 return;
             }
             
-            // إعداد رأس HTML مع تنسيق Word
             const header = `
                 <!DOCTYPE html>
                 <html dir="rtl" lang="ar">
@@ -884,9 +1713,9 @@
                             margin: 2cm;
                         }
                         body {
-                            font-family: 'Times New Roman', serif;
-                            font-size: 18pt;
-                            line-height: 2;
+                            font-family: 'Simplified Arabic', 'Times New Roman', serif;
+                            font-size: 16pt;
+                            line-height: 1.8;
                             text-align: right;
                             direction: rtl;
                             margin: 0;
@@ -894,18 +1723,18 @@
                         }
                         .court-name {
                             text-align: center;
-                            font-size: 24pt;
+                            font-size: 20pt;
                             font-weight: bold;
                             margin-bottom: 40pt;
                         }
                         .case-number {
                             text-align: center;
-                            font-size: 18pt;
+                            font-size: 16pt;
                             margin: 30pt 0;
                         }
                         .case-title {
                             text-align: center;
-                            font-size: 22pt;
+                            font-size: 18pt;
                             font-weight: bold;
                             margin: 40pt 0;
                             text-decoration: underline;
@@ -923,36 +1752,25 @@
                             text-align: left;
                             margin-top: 100pt;
                         }
-                        .witness-section {
-                            text-align: right;
-                            margin-top: 50pt;
-                        }
                         .center-text {
                             text-align: center;
                             margin: 40pt 0;
-                            font-size: 20pt;
+                            font-size: 18pt;
                             font-weight: bold;
-                        }
-                        ol {
-                            padding-right: 40px;
-                        }
-                        li {
-                            margin-bottom: 10pt;
                         }
                     </style>
                 </head>
                 <body>
             `;
             
-            const footer = `</body></html>`;
+            const footer = '</body></html>';
             const fullHTML = header + content + footer;
             
-            // إنشاء ملف Word
             const blob = new Blob([fullHTML], { type: 'application/msword' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `عريضة_قانونية_${new Date().toISOString().split('T')[0]}.doc`;
+            a.download = `عريضة_${currentTemplateId}_${new Date().toISOString().split('T')[0]}.doc`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -961,15 +1779,44 @@
             showToast('تم تصدير العريضة إلى Word بنجاح ✓', 'success');
         }
 
-        // الطباعة المباشرة
-        function printPetition() {
-            const content = document.getElementById('petitionPreview').innerHTML;
-            if (!content || content.includes('سيظهر محتوى العريضة')) {
+        // تصدير إلى PDF
+        function exportToPDF() {
+            const element = document.getElementById('petitionPreview');
+            if (!element || element.innerHTML.includes('ستظهر هنا معاينة')) {
                 showToast('يرجى إنشاء العريضة أولاً', 'error');
                 return;
             }
             
-            // إنشاء نافذة طباعة مع تنسيق مناسب
+            const opt = {
+                margin: [20, 20, 20, 20],
+                filename: `عريضة_${currentTemplateId}_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                showToast('تم تصدير العريضة إلى PDF بنجاح ✓', 'success');
+            });
+        }
+
+        // الطباعة المباشرة
+        function printPetition() {
+            const content = document.getElementById('petitionPreview').innerHTML;
+            if (!content || content.includes('ستظهر هنا معاينة')) {
+                showToast('يرجى إنشاء العريضة أولاً', 'error');
+                return;
+            }
+            
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
                 <!DOCTYPE html>
@@ -984,9 +1831,9 @@
                                 margin: 2cm;
                             }
                             body {
-                                font-family: 'Times New Roman', serif;
-                                font-size: 16pt;
-                                line-height: 2;
+                                font-family: 'Simplified Arabic', 'Times New Roman', serif;
+                                font-size: 14pt;
+                                line-height: 1.8;
                                 text-align: right;
                                 direction: rtl;
                                 margin: 0;
@@ -994,9 +1841,9 @@
                             }
                         }
                         body {
-                            font-family: 'Times New Roman', serif;
-                            font-size: 16pt;
-                            line-height: 2;
+                            font-family: 'Simplified Arabic', 'Times New Roman', serif;
+                            font-size: 14pt;
+                            line-height: 1.8;
                             text-align: right;
                             direction: rtl;
                             margin: 2cm;
@@ -1004,18 +1851,18 @@
                         }
                         .court-name {
                             text-align: center;
-                            font-size: 20pt;
+                            font-size: 18pt;
                             font-weight: bold;
                             margin-bottom: 30pt;
                         }
                         .case-number {
                             text-align: center;
-                            font-size: 16pt;
+                            font-size: 14pt;
                             margin: 20pt 0;
                         }
                         .case-title {
                             text-align: center;
-                            font-size: 18pt;
+                            font-size: 16pt;
                             font-weight: bold;
                             margin: 30pt 0;
                             text-decoration: underline;
@@ -1050,28 +1897,26 @@
         // مسح النموذج
         function resetForm() {
             if (confirm('هل أنت متأكد من رغبتك في مسح جميع البيانات؟')) {
-                document.getElementById('petitionType').value = '';
-                document.getElementById('formFields').innerHTML = '';
+                currentTemplateId = '';
+                document.getElementById('formFields').innerHTML = `
+                    <p style="color: #64748b; text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-file-alt" style="font-size: 48px; color: #cbd5e0; margin-bottom: 15px;"></i><br>
+                        اختر نموذج عريضة من القائمة لبدء إدخال البيانات
+                    </p>
+                `;
                 document.getElementById('petitionPreview').innerHTML = `
-                    <div class="court-name">محكمة ........ الجزئية</div>
-                    <div class="case-number">رقم الدعوى: ............ / ........</div>
-                    <div class="case-title">دعوى ..............</div>
-                    
-                    <div class="parties-info">
-                        <p><strong>بين</strong></p>
-                        <p>المدعي: ................</p>
-                        <p>عنوان المدعي: ................</p>
-                        <p style="margin-top: 20px;"><strong>ضـد</strong></p>
-                        <p>المدعى عليه: ................</p>
-                        <p>عنوان المدعى عليه: ................</p>
-                    </div>
-                    
-                    <div class="petition-body">
-                        <p>السيد/ قاضي المحكمة الموقر،</p>
-                        <p>تحية طيبة وبعد،</p>
-                        <p>نقدم لسيادتكم هذه العريضة طالبين فيها ........</p>
+                    <div style="text-align: center; color: #64748b; padding: 100px 20px;">
+                        <i class="fas fa-file-alt" style="font-size: 64px; color: #e2e8f0; margin-bottom: 20px;"></i><br>
+                        <p style="font-size: 18px;">ستظهر هنا معاينة العريضة بعد تعبئة النموذج</p>
+                        <p style="font-size: 14px; margin-top: 10px;">تنسيق مشابه للورقة الأصلية</p>
                     </div>
                 `;
+                
+                // إلغاء تحديد البطاقة النشطة
+                document.querySelectorAll('.template-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
                 showToast('تم مسح النموذج بنجاح ✓', 'success');
             }
         }
@@ -1085,11 +1930,18 @@
                 warning: '#d97706'
             };
             
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                info: 'info-circle',
+                warning: 'exclamation-triangle'
+            };
+            
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.style.background = colors[type] || colors.success;
             toast.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <i class="fas fa-${icons[type] || 'info-circle'}"></i>
                 <span>${message}</span>
             `;
             
@@ -1102,24 +1954,279 @@
             }, 3000);
         }
 
-        // تحميل النظام
-        document.addEventListener('DOMContentLoaded', function() {
-            showToast('مرحباً بك في نظام MEELAWFIRM لكتابة العرائض القانونية', 'info');
+        // إعداد ميزات PWA
+        function setupPWA() {
+            // تسجيل Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').catch(err => {
+                        console.log('Service Worker registration failed: ', err);
+                    });
+                });
+            }
             
-            // إضافة تأثيرات للحقول
-            const inputs = document.querySelectorAll('.form-control');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.style.borderColor = 'var(--secondary)';
-                    this.style.boxShadow = '0 0 0 3px rgba(45, 106, 79, 0.1)';
+            // اكتشاف حالة الاتصال
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            
+            function updateOnlineStatus() {
+                if (!navigator.onLine) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'offline-indicator';
+                    indicator.id = 'offlineIndicator';
+                    indicator.innerHTML = '<i class="fas fa-wifi-slash"></i> أنت غير متصل بالإنترنت';
+                    document.body.appendChild(indicator);
+                } else {
+                    const indicator = document.getElementById('offlineIndicator');
+                    if (indicator) indicator.remove();
+                }
+            }
+            
+            // تحميل المسودات المحفوظة
+            loadSavedDrafts();
+        }
+
+        // تبديل قائمة PWA
+        function togglePWAMenu() {
+            const menu = document.getElementById('pwaMenu');
+            menu.classList.toggle('show');
+        }
+
+        // حفظ المسودة
+        function saveDraft() {
+            if (!currentTemplateId) {
+                showToast('لا توجد عريضة لحفظها', 'error');
+                return;
+            }
+            
+            const draft = {
+                templateId: currentTemplateId,
+                data: {},
+                timestamp: new Date().toISOString()
+            };
+            
+            // جمع بيانات الحقول
+            const template = allTemplates[currentTemplateId];
+            template.fields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (element) {
+                    draft.data[field.id] = element.value;
+                }
+            });
+            
+            // حفظ في localStorage
+            const drafts = JSON.parse(localStorage.getItem('petitionDrafts') || '[]');
+            drafts.push(draft);
+            localStorage.setItem('petitionDrafts', JSON.stringify(drafts));
+            
+            showToast('تم حفظ المسودة بنجاح ✓', 'success');
+            togglePWAMenu();
+        }
+
+        // تحميل المسودة
+        function loadDraft() {
+            const drafts = JSON.parse(localStorage.getItem('petitionDrafts') || '[]');
+            if (drafts.length === 0) {
+                showToast('لا توجد مسودات محفوظة', 'info');
+                return;
+            }
+            
+            // عرض قائمة المسودات
+            let message = 'المسودات المحفوظة:\n\n';
+            drafts.forEach((draft, index) => {
+                const date = new Date(draft.timestamp).toLocaleDateString('ar-SA');
+                message += `${index + 1}. ${allTemplates[draft.templateId]?.name || 'غير معروف'} - ${date}\n`;
+            });
+            
+            const draftIndex = prompt(`${message}\nأدخل رقم المسودة المطلوبة:`);
+            if (draftIndex && drafts[draftIndex - 1]) {
+                const draft = drafts[draftIndex - 1];
+                currentTemplateId = draft.templateId;
+                loadTemplateForm(draft.templateId);
+                
+                // تعبئة البيانات
+                Object.keys(draft.data).forEach(fieldId => {
+                    const element = document.getElementById(fieldId);
+                    if (element) {
+                        element.value = draft.data[fieldId];
+                    }
                 });
                 
-                input.addEventListener('blur', function() {
-                    this.style.borderColor = '#e2e8f0';
-                    this.style.boxShadow = 'none';
+                showToast('تم تحميل المسودة بنجاح ✓', 'success');
+            }
+            
+            togglePWAMenu();
+        }
+
+        // تحميل المسودات المحفوظة
+        function loadSavedDrafts() {
+            const drafts = JSON.parse(localStorage.getItem('petitionDrafts') || '[]');
+            if (drafts.length > 0) {
+                console.log(`تم العثور على ${drafts.length} مسودة محفوظة`);
+            }
+        }
+
+        // مشاركة العريضة
+        function sharePetition() {
+            if (!currentTemplateId) {
+                showToast('لا توجد عريضة لمشاركتها', 'error');
+                return;
+            }
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: allTemplates[currentTemplateId].name,
+                    text: 'عريضة قانونية منشأة عبر نظام MEELAWFIRM',
+                    url: window.location.href
+                }).then(() => {
+                    showToast('تمت المشاركة بنجاح', 'success');
+                }).catch(err => {
+                    console.log('Error sharing:', err);
                 });
-            });
+            } else {
+                showToast('ميزة المشاركة غير متوفرة في هذا المتصفح', 'info');
+            }
+            
+            togglePWAMenu();
+        }
+
+        // تبديل الوضع المظلم
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            showToast(`تم تفعيل الوضع ${isDark ? 'المظلم' : 'الفاتح'}`, 'info');
+            togglePWAMenu();
+        }
+
+        // بناء النماذج الإضافية
+        function buildMaintenance() {
+            const court = document.getElementById('court').value || '................';
+            const plaintiff = document.getElementById('plaintiff').value || '................';
+            const defendant = document.getElementById('defendant').value || '................';
+            const monthlyAmount = document.getElementById('monthlyAmount').value || '................';
+            const clothingAmount = document.getElementById('clothingAmount').value || '................';
+            
+            return `
+                <div class="court-name">${court}</div>
+                <div class="case-number">رقم الدعوى: ${document.getElementById('caseNo').value || '............ / ........'}</div>
+                <div class="case-title">دعوى نفقة زوجية</div>
+                
+                <div class="parties-info">
+                    <p><strong>بين</strong></p>
+                    <p>المدعية: ${plaintiff}</p>
+                    <p>عنوان المدعية: ${document.getElementById('plaintiffAddress').value || '................'}</p>
+                    <p>رقم هاتف المدعية: ${document.getElementById('plaintiffPhone').value || '................'}</p>
+                    <p style="margin-top: 20px;"><strong>ضـد</strong></p>
+                    <p>المدعى عليه: ${defendant}</p>
+                    <p>عنوان المدعى عليه: ${document.getElementById('defendantAddress').value || '................'}</p>
+                    <p>رقم هاتف المدعى عليه: ${document.getElementById('defendantPhone').value || '................'}</p>
+                </div>
+                
+                <div class="petition-body">
+                    <p>السيد/ قاضي ${court} المحترم،</p>
+                    <p>تحية طيبة وبعد،</p>
+                    <p>نقدم لسيادتكم هذه العريضة طالبين فيها ما يلي:</p>
+                    
+                    <p style="margin-top: 20px; text-align: right; padding-right: 20px;">
+                        <strong>أولاً:</strong> المدعية زوجة شرعية للمدعى عليه وفي عصمته وطاعته.
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثانياً:</strong> المدعى عليه ميسور الحال من عمله في ${document.getElementById('husbandJob').value || '................'}
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثالثاً:</strong> المدعى عليه قام بقطع النفقة عنها دون مسوغ شرعي منذ ${document.getElementById('maintenanceStoppedDate').value || '................'}
+                    </p>
+                    
+                    <div class="prayer-section">
+                        <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
+                        <p style="text-align: right; padding-right: 40px;">
+                            1- نفقة زوجية سابقة تقدر بمبلغ ${monthlyAmount} جنيه من تاريخ قطعها<br>
+                            2- الحكم لها بالطعام والإيدام شهرياً مبلغ ${monthlyAmount} جنيه<br>
+                            3- ولبدل كسوتها كل ستة أشهر مبلغ ${clothingAmount} جنيه
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                    <p style="font-size: 20px; font-weight: bold;">والله ولي التوفيق</p>
+                </div>
+                
+                <div class="signature-section">
+                    <p>مقدم العريضة</p>
+                    <p>${plaintiff}</p>
+                    <div class="signature-line"></div>
+                    <p style="margin-top: 5px; font-size: 14px;">التوقيع</p>
+                </div>
+            `;
+        }
+
+        function buildDivorceHarm() {
+            const court = document.getElementById('court').value || '................';
+            const plaintiff = document.getElementById('plaintiff').value || '................';
+            const defendant = document.getElementById('defendant').value || '................';
+            const harmDetails = document.getElementById('harmDetails').value || '................';
+            
+            return `
+                <div class="court-name">${court}</div>
+                <div class="case-number">رقم الدعوى: ${document.getElementById('caseNo').value || '............ / ........'}</div>
+                <div class="case-title">دعوى طلاق للضرر</div>
+                
+                <div class="parties-info">
+                    <p><strong>بين</strong></p>
+                    <p>المدعية: ${plaintiff}</p>
+                    <p>عنوان المدعية: ${document.getElementById('plaintiffAddress').value || '................'}</p>
+                    <p>رقم هاتف المدعية: ${document.getElementById('plaintiffPhone').value || '................'}</p>
+                    <p style="margin-top: 20px;"><strong>ضـد</strong></p>
+                    <p>المدعى عليه: ${defendant}</p>
+                    <p>عنوان المدعى عليه: ${document.getElementById('defendantAddress').value || '................'}</p>
+                    <p>رقم هاتف المدعى عليه: ${document.getElementById('defendantPhone').value || '................'}</p>
+                </div>
+                
+                <div class="petition-body">
+                    <p>السيد/ قاضي ${court} المحترم،</p>
+                    <p>تحية طيبة وبعد،</p>
+                    <p>نقدم لسيادتكم هذه العريضة طالبين فيها ما يلي:</p>
+                    
+                    <p style="margin-top: 20px; text-align: right; padding-right: 20px;">
+                        <strong>أولاً:</strong> المدعية زوجة شرعية للمدعى عليه وما زالت في عصمته.
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثانياً:</strong> المدعى عليه قام ${harmDetails}
+                    </p>
+                    <p style="text-align: right; padding-right: 20px;">
+                        <strong>ثالثاً:</strong> الضرر المذكور أعلاه لا يليق بأمثالها ويتعذر معه دوام العشرة ولم تتصلح معه بعد ذلك.
+                    </p>
+                    
+                    <div class="prayer-section">
+                        <p style="text-align: center; font-weight: bold; margin: 30px 0;">وعليه نلتمس من سيادتكم الحكم بما يلي:</p>
+                        <p style="text-align: right; padding-right: 40px;">
+                            طلاقها منه طلقة بائنة للضرر
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                    <p style="font-size: 20px; font-weight: bold;">والله ولي التوفيق</p>
+                </div>
+                
+                <div class="signature-section">
+                    <p>مقدم العريضة</p>
+                    <p>${plaintiff}</p>
+                    <div class="signature-line"></div>
+                    <p style="margin-top: 5px; font-size: 14px;">التوقيع</p>
+                </div>
+            `;
+        }
+
+        // إغلاق قائمة PWA عند النقر خارجها
+        document.addEventListener('click', function(event) {
+            const pwaMenu = document.getElementById('pwaMenu');
+            const pwaBtn = document.querySelector('.pwa-btn');
+            
+            if (pwaMenu && pwaBtn && !pwaMenu.contains(event.target) && !pwaBtn.contains(event.target)) {
+                pwaMenu.classList.remove('show');
+            }
         });
     </script>
 </body>
-                    </html>
+</html>
