@@ -1,56 +1,65 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>نظام كتابة العرائض والتوثيقات – نسخة قانونية متقدمة</title>
+<title>نظام كتابة العرائض والتوثيقات</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
 <style>
-body{font-family:'Cairo',sans-serif;background:#eef1f4;margin:0;padding:20px}
-.container{max-width:950px;margin:auto;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:25px}
-.header{text-align:center;border-bottom:2px solid #ddd;padding-bottom:10px;margin-bottom:20px}
-.header h1{margin:0}
-.header p{margin:5px 0;font-size:14px;color:#555}
-select,input,textarea,button{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;font-family:'Cairo'}
+body{font-family:'Cairo',sans-serif;background:#f4f6f8;margin:0;padding:20px}
+.container{max-width:900px;margin:auto;background:#fff;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.08);padding:20px}
+h1{text-align:center;margin-bottom:20px}
+select, input, textarea, button{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc;font-family:'Cairo'}
 button{background:#1f6feb;color:#fff;font-weight:700;cursor:pointer}
 button:hover{background:#174ea6}
 .form-section{display:none}
-.output{white-space:pre-wrap;border:1px dashed #aaa;padding:20px;border-radius:8px;margin-top:20px;background:#fafafa;line-height:1.9}
+.output{white-space:pre-wrap;border:1px dashed #ccc;padding:15px;border-radius:8px;margin-top:20px;background:#fafafa}
 @media print{body{background:#fff}.container{box-shadow:none}}
 </style>
 </head>
 <body>
 <div class="container">
-<div class="header">
-<h1>مكتب …………… للمحاماة والاستشارات القانونية</h1>
-<p>نظام إعداد العرائض والتوثيقات – وفق القانون السوداني</p>
-</div><label>اختر نوع العريضة / التوثيق</label> <select id="type" onchange="showForm()">
+<h1>نظام ذكي لكتابة العرائض والتوثيقات</h1>
 
+<label>اختر نوع العريضة / التوثيق</label>
+<select id="type" onchange="showForm()">
 <option value="">-- اختر --</option>
 <option value="petition">عريضة دعوى</option>
-<option value="authorization">توكيل خاص</option>
-<option value="declaration">إقرار قانوني</option>
-</select><div id="petition" class="form-section">
+<option value="authorization">توكيل</option>
+<option value="declaration">إقرار</option>
+</select>
+
+<div id="petition" class="form-section">
 <h3>بيانات عريضة الدعوى</h3>
-<input id="court" placeholder="اسم المحكمة" required>
-<input id="plaintiff" placeholder="اسم المدعي" required>
-<input id="defendant" placeholder="اسم المدعى عليه" required>
-<textarea id="subject" placeholder="موضوع الدعوى" required></textarea>
-<textarea id="facts" placeholder="الوقائع بالتفصيل" required></textarea>
-</div><div id="authorization" class="form-section">
+<input id="court" placeholder="اسم المحكمة">
+<input id="plaintiff" placeholder="اسم المدعي">
+<input id="defendant" placeholder="اسم المدعى عليه">
+<textarea id="subject" placeholder="موضوع الدعوى"></textarea>
+<textarea id="facts" placeholder="الوقائع"></textarea>
+</div>
+
+<div id="authorization" class="form-section">
 <h3>بيانات التوكيل</h3>
-<input id="principal" placeholder="اسم الموكل" required>
-<input id="agent" placeholder="اسم الوكيل" required>
-<textarea id="authText" placeholder="الصلاحيات الممنوحة للوكيل" required></textarea>
-</div><div id="declaration" class="form-section">
+<input id="principal" placeholder="اسم الموكل">
+<input id="agent" placeholder="اسم الوكيل">
+<textarea id="authText" placeholder="نص الصلاحيات"></textarea>
+</div>
+
+<div id="declaration" class="form-section">
 <h3>بيانات الإقرار</h3>
-<input id="declarant" placeholder="اسم المقر" required>
-<textarea id="decText" placeholder="نص الإقرار القانوني" required></textarea>
-</div><button onclick="generate()">إنشاء النموذج القانوني</button> <button onclick="exportWord()">تصدير إلى Word (A4 رسمي)</button>
+<input id="declarant" placeholder="اسم المقر">
+<textarea id="decText" placeholder="نص الإقرار"></textarea>
+</div>
+
+<button onclick="generate()">إنشاء النموذج</button>
+<button onclick="exportWord()">تصدير إلى Word (A4)</button>
 
 <div id="result" class="output"></div>
-</div><script>
-let finalText="";
+</div>
+
+<script>
+let finalText = "";
 function showForm(){
  document.querySelectorAll('.form-section').forEach(s=>s.style.display='none');
  let t=document.getElementById('type').value;
@@ -60,23 +69,32 @@ function showForm(){
 function generate(){
  let t=document.getElementById('type').value;
  if(t==='petition'){
- finalText=`محكمة ${court.value}\n\nالمدعي: ${plaintiff.value}\nالمدعى عليه: ${defendant.value}\n\nالموضوع:\n${subject.value}\n\nالوقائع:\n${facts.value}\n\nلذلك نلتمس من عدالتكم الموقرة إصدار الحكم وفقاً للقانون.\n\nوتفضلوا بقبول فائق الاحترام.\n\nالمقدم:\n…………………`;
+ finalText=`محكمة ${court.value}\n\nالمدعي: ${plaintiff.value}\nالمدعى عليه: ${defendant.value}\n\nالموضوع:\n${subject.value}\n\nالوقائع:\n${facts.value}\n\nوتفضلوا بقبول فائق الاحترام.`;
  }
  if(t==='authorization'){
- finalText=`توكيل خاص\n\nأنا ${principal.value}، أوكل السيد ${agent.value} توكيلاً خاصاً للقيام بالآتي:\n${authText.value}\n\nوله حق المرافعة والتوقيع واتخاذ كافة الإجراءات القانونية اللازمة.\n\nوهذا إقرار مني بذلك.\n\nالتوقيع:\n…………………`;
+ finalText=`إقرار توكيل\n\nأنا ${principal.value} أوكل السيد ${agent.value} للقيام بالآتي:\n${authText.value}\n\nوذلك إقراراً مني.`;
  }
  if(t==='declaration'){
- finalText=`إقرار قانوني\n\nأنا الموقع أدناه ${declarant.value} أقر وأنا بكامل قواي العقلية والشرعية بالآتي:\n${decText.value}\n\nوأتحمل كامل المسؤولية القانونية المترتبة على هذا الإقرار.\n\nالمقر:\n…………………`;
+ finalText=`إقرار\n\nأنا الموقع أدناه ${declarant.value} أقر بالآتي:\n${decText.value}\n\nوالله على ما أقول شهيد.`;
  }
  document.getElementById('result').textContent=finalText;
 }
 
 async function exportWord(){
- if(!finalText){alert('يرجى إنشاء النموذج أولاً');return}
+ if(!finalText){alert('أنشئ النموذج أولاً');return}
  const { Document, Packer, Paragraph, TextRun, PageSize } = window.docx;
- const doc=new Document({sections:[{properties:{page:{size:PageSize.A4}},children:finalText.split("\n").map(l=>new Paragraph({children:[new TextRun({text:l,font:'Arial',size:26})]}))}]});
- const blob=await Packer.toBlob(doc);
- const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='وثيقة_قانونية.docx';a.click();
+ const doc = new Document({
+ sections:[{
+ properties:{page:{size:PageSize.A4}},
+ children: finalText.split("\n").map(l=>new Paragraph({children:[new TextRun({text:l, font:'Arial', size:24})]}))
+ }]
+ });
+ const blob = await Packer.toBlob(doc);
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='document.docx';
+ a.click();
 }
-</script></body>
+</script>
+</body>
 </html>
