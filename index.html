@@ -3,121 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEELAWFIRM - المحرر القانوني الذكي</title>
+    <title>منشئ العرائض القانونية المحترف</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body>
+<body class="bg-light">
 
-    <header>
-        <div class="brand">
-            <h1>MEELAWFIRM ⚖️</h1>
-            <span>نظام تحرير العرائض القانونية المفتوح</span>
-        </div>
-        <div class="search-bar">
-            <input type="text" id="globalSearch" placeholder="بحث في القوالب والعرائض...">
-        </div>
-        <nav>
-            <a href="index.html" class="active">الرئيسية</a>
-            <a href="civil.html">العرائض المدنية</a>
-            <a href="criminal.html">العرائض الجنائية</a>
-            <a href="personal.html">الأحوال الشخصية</a>
-        </nav>
-    </header>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold cairo-font">منظومة صياغة العرائض السودانية</h1>
+        <p class="text-muted">اختر نوع الدعوى وقم بتعبئة البيانات لتوليد عريضة احترافية جاهزة للطباعة</p>
+    </div>
 
-    <div class="container">
-        
-        <div class="editor-panel">
-            <h2>📝 محرر العرائض العامة</h2>
-            <p style="color:#7f8c8d; margin-bottom: 20px;">قم بملء البيانات أدناه لإنشاء العريضة تلقائياً.</p>
-            
-            <form id="petitionForm" onsubmit="event.preventDefault(); generatePetition();">
-                <div class="form-group">
-                    <label>الجهة القضائية (المحكمة / النيابة)</label>
-                    <input type="text" id="courtName" placeholder="مثال: محكمة الخرطوم الجزئية">
-                </div>
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 p-4">
+                <h4 class="mb-4 text-primary fw-bold">بيانات العريضة</h4>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">نوع الدعوى / البلاغ</label>
+                    <select id="petitionType" class="form-select border-primary" onchange="updateForm()">
+                        <option value="">-- اختر من القائمة --</option>
+                        
+                        <optgroup label="⚖️ الدعاوى المدنية">
+                            <option value="civil_1">دعوى مطالبة مالية</option>
+                            <option value="civil_2">دعوى استرداد حيازة</option>
+                            <option value="civil_3">دعوى إخلاء للعقار</option>
+                            <option value="civil_4">دعوى تعويض عن ضرر</option>
+                            <option value="civil_5">دعوى فسخ عقد</option>
+                            <option value="civil_6">دعوى إثبات زواج</option>
+                            <option value="civil_7">دعوى طلاق للضرر</option>
+                            <option value="civil_8">دعوى نفقة صغار</option>
+                            <option value="civil_9">دعوى حضانة</option>
+                            <option value="civil_10">دعوى تقسيم ميراث</option>
+                            <option value="civil_11">دعوى صحة ونفاذ بيع</option>
+                            <option value="civil_12">دعوى بطلان عقد</option>
+                            <option value="civil_13">دعوى إثبات نسب</option>
+                        </optgroup>
 
-                <div style="display:flex; gap:10px;">
-                    <div class="form-group" style="flex:1">
-                        <label>الطرف الأول (المدعي/الشاكي)</label>
-                        <input type="text" id="plaintiffName" placeholder="الاسم رباعي">
-                    </div>
-                    <div class="form-group" style="flex:1">
-                        <label>الطرف الثاني (المدعى عليه)</label>
-                        <input type="text" id="defendantName" placeholder="الاسم رباعي">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>نوع العريضة (العنوان)</label>
-                    <input type="text" id="petitionTitle" placeholder="مثال: صحيفة دعوى مدنية / عريضة جنائية">
-                </div>
-
-                <div class="form-group">
-                    <label>الموضوع</label>
-                    <input type="text" id="petitionSubject" placeholder="مثال: دعوى مطالبة مالية بمبلغ...">
-                </div>
-
-                <div class="form-group">
-                    <label>الموجه إليه (اللقب)</label>
-                    <select id="judgeTitle">
-                        <option value="السيد / قاضي المحكمة">السيد / قاضي المحكمة</option>
-                        <option value="السيد / وكيل النيابة الأعلى">السيد / وكيل النيابة الأعلى</option>
-                        <option value="السيد / مأمور القسم">السيد / مأمور القسم</option>
+                        <optgroup label="🚨 البلاغات الجنائية">
+                            <option value="crim_1">عريضة دعوى قتل عمد (م 130)</option>
+                            <option value="crim_2">عريضة دعوى جراح عمد (م 139)</option>
+                            <option value="crim_3">عريضة بلاغ طفل (قانون 2010)</option>
+                            <option value="crim_4">عريضة بلاغ مخدرات</option>
+                            <option value="crim_5">عريضة التعدي الجنائي (م 183)</option>
+                            <option value="crim_6">عريضة الاتلاف الجنائي (م 182)</option>
+                            <option value="crim_7">عريضة التملك الجنائي (م 180)</option>
+                            <option value="crim_8">عريضة صك مرتد / شيك (م 179)</option>
+                            <option value="crim_9">عريضة دعوى احتيال (م 178)</option>
+                            <option value="crim_10">عريضة خيانة أمانة (م 177)</option>
+                            <option value="crim_11">عريضة دعوى سرقة (م 174)</option>
+                            <option value="crim_12">عريضة إساءة وسباب (م 160)</option>
+                            <option value="crim_13">عريضة إشانة سمعة (م 159)</option>
+                            <option value="crim_14">عريضة دعوى أذى (م 142)</option>
+                            <option value="crim_15">عريضة اتهام كاذب (م 114)</option>
+                        </optgroup>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label>الوقائع والطلبات (نص العريضة)</label>
-                    <textarea id="petitionBody" placeholder="اكتب الوقائع مرقمة والطلبات هنا..."></textarea>
+                <div id="dynamicFormFields">
+                    <div class="mb-3">
+                        <label id="courtLabel" class="form-label">اسم المحكمة / النيابة</label>
+                        <input type="text" id="courtName" class="form-control" placeholder="مثال: الخرطوم شمال">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label id="party1Label" class="form-label">المدعي / الشاكي</label>
+                            <input type="text" id="party1" class="form-control">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label id="party2Label" class="form-label">المدعى عليه / المشكو ضده</label>
+                            <input type="text" id="party2" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">الوقائع</label>
+                        <textarea id="facts" class="form-control" rows="4" placeholder="اشرح ما حدث بالتفصيل..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">الطلبات / الملتمسات</label>
+                        <textarea id="requests" class="form-control" rows="3" placeholder="ماذا تطلب من السلطات؟"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">الشهود / المرفقات</label>
+                        <input type="text" id="evidence" class="form-control" placeholder="شهود، مستندات، أورنيك 8.. الخ">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>المستندات المرفقة</label>
-                    <textarea id="attachedDocs" style="height:60px;" placeholder="1- ... &#10;2- ..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>أسماء الشهود</label>
-                    <textarea id="witnessesNames" style="height:60px;" placeholder="1- ... &#10;2- ..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>مقدم العريضة (المحامي / الوكيل)</label>
-                    <input type="text" id="lawyerName" placeholder="الاسم والتصفة">
-                </div>
-
-                <button class="btn-generate" onclick="generatePetition()">🔄 تحديث العريضة</button>
-            </form>
+                <button class="btn btn-primary w-100 fw-bold py-2 mt-3" onclick="generatePetition()">توليد العريضة الجاهزة ✨</button>
+                <button class="btn btn-outline-secondary w-100 mt-2" onclick="window.print()">طباعة فورية 🖨️</button>
+            </div>
         </div>
 
-        <div class="preview-panel">
-            <div class="toolbar">
-                <button class="btn-tool btn-print" onclick="printPetition()">🖨️ طباعة</button>
-                <button class="btn-tool btn-pdf" onclick="exportPDF()">📄 PDF</button>
-                <button class="btn-tool btn-word" onclick="exportWord()">📝 Word</button>
-                <button class="btn-tool btn-copy" onclick="copyText()">📋 نسخ</button>
-            </div>
-
-            <div id="petition-paper">
-                <div style="text-align:center; color:#bdc3c7; padding-top:100px;">
-                    <h3>معاينة العريضة تظهر هنا</h3>
-                    <p>قم بتعبئة النموذج للمشاهدة</p>
+        <div class="col-lg-7">
+            <div id="legalPaper" class="legal-paper shadow">
+                <div class="paper-watermark">نسخة مسودة</div>
+                <div id="petitionContent">
+                    <p class="text-center text-muted">قم بتعبئة البيانات لعرض العريضة هنا...</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <footer>
-        <div class="footer-links">
-            <a href="#">عن النظام</a> |
-            <a href="#">سياسة الخصوصية</a> |
-            <a href="#">شروط الاستخدام</a> |
-            <a href="#">اتصل بنا</a>
-        </div>
-        <p style="margin-top:1rem; opacity:0.7;">Powered by MEELAWFIRM Open Source Initiative &copy; 2024</p>
-    </footer>
-
-    <script src="assets/app.js"></script>
+<script src="assets/app.js"></script>
 </body>
 </html>
