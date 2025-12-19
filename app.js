@@ -1,150 +1,69 @@
-/* assets/app.js */
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Global Search Logic
-    const searchInput = document.getElementById('globalSearch');
-    if(searchInput){
-        searchInput.addEventListener('keyup', (e) => {
-            // Placeholder for advanced search logic across pages
-            console.log('Searching for:', e.target.value);
-        });
-    }
-
-    // Auto-Generate on Input (Optional: remove 'input' event if you only want button click)
-    const form = document.getElementById('petitionForm');
-    if(form) {
-        form.addEventListener('input', generatePetition); 
-    }
-});
-
 function generatePetition() {
-    // 1. Get Data or Use Placeholder
     const getVal = (id) => {
         const el = document.getElementById(id);
-        return (el && el.value.trim() !== "") ? el.value : "(        )";
+        return (el && el.value.trim() !== "") ? el.value : "....................";
     };
 
-    // 2. Map Data to Petition Structure
-    const data = {
-        court: getVal('courtName'),
-        plaintiff: getVal('plaintiffName'),
-        defendant: getVal('defendantName'),
-        title: getVal('petitionTitle'), // e.g., صحيفة دعوى
-        subject: getVal('petitionSubject'),
-        judgeTitle: document.getElementById('judgeTitle') ? document.getElementById('judgeTitle').value : "السيد قاضي المحكمة",
-        body: getVal('petitionBody'),
-        lawyer: getVal('lawyerName'),
-        docs: getVal('attachedDocs'),
-        witnesses: getVal('witnessesNames')
-    };
-
-    // 3. Render HTML
     const paper = document.getElementById('petition-paper');
     
     paper.innerHTML = `
         <div class="legal-header">
-            <h2>${data.court}</h2>
+            <h2>لدى محكمة ${getVal('courtName')}</h2>
+        </div>
+
+        <div style="text-align:right; margin-bottom: 10px;">
+            <strong>رقم الدعوى: ${getVal('caseNumber')}</strong>
         </div>
 
         <div class="legal-parties">
-            <h3>(بين)</h3>
-            <p><strong>المدعي/الشاكي:</strong> ${data.plaintiff}</p>
-            <p><strong>ضــــد</strong></p>
-            <p><strong>المدعى عليه/المشكو ضده:</strong> ${data.defendant}</p>
-        </div>
-
-        <div class="legal-title">
-            <h3>${data.title}</h3>
+            <h3>فيمـا بيــن</h3>
+            <p><strong>${getVal('plaintiffName')}</strong> <span style="float:left;">(مدعي)</span></p>
+            <p style="text-align:center; margin: 10px 0;">ضــــــــد</p>
+            <p><strong>${getVal('defendantName')}</strong> <span style="float:left;">(مدعى عليه)</span></p>
         </div>
 
         <div class="legal-subject">
-            <h4>الموضوع: ${data.subject}</h4>
+            <h4>الموضوع: ${getVal('petitionSubject')}</h4>
         </div>
 
         <div class="legal-address">
-            ${data.judgeTitle} <span style="display:block; text-align:center; margin-top:5px;">الموقر</span>
+            السيد/ قاضي محكمة ${getVal('courtName')} الموقر
         </div>
 
+        <p>بكل التقدير والاحترام ونيابة عن المدعي نلتمس تصريح دعوى مدنية للأسباب التالية:</p>
+
         <div class="legal-body">
-            ${formatBody(data.body)}
+            ${getVal('petitionBody').split('\n').map(line => `<p>${line}</p>`).join('')}
+        </div>
+
+        <div class="legal-requests" style="margin-top:20px;">
+            <strong>بناءً عليه نلتمس الحكم للمدعي بـ:</strong>
+            <div style="white-space: pre-wrap; margin-top:10px;">${getVal('petitionRequests')}</div>
         </div>
 
         <div class="legal-closing">
-            <p>ولله التوفيق،،،</p>
+            <p>ولكم وافر الشكر والتقدير،،</p>
         </div>
 
         <div class="legal-signatures">
             <div class="signature-block">
                 <p><strong>مقدم العريضة</strong></p>
-                <p>${data.lawyer}</p>
-                <p>(التوقيع)</p>
+                <p>${getVal('lawyerName')}</p>
+                <p>التوقيع: ....................</p>
             </div>
         </div>
 
         <div class="legal-footer">
-            <div class="docs-section">
-                <strong>المستندات المرفقة:</strong>
-                <pre style="font-family:inherit; white-space:pre-wrap;">${data.docs}</pre>
-            </div>
-            <div class="witnesses-section">
-                <strong>الشهود:</strong>
-                <pre style="font-family:inherit; white-space:pre-wrap;">${data.witnesses}</pre>
+            <div style="display:flex; justify-content: space-between;">
+                <div>
+                    <strong>المستندات:</strong>
+                    <div style="font-size: 11pt;">${getVal('attachedDocs')}</div>
+                </div>
+                <div>
+                    <strong>الشهود:</strong>
+                    <div style="font-size: 11pt;">${getVal('witnessesNames')}</div>
+                </div>
             </div>
         </div>
     `;
-}
-
-// Helper to format body text with paragraphs
-function formatBody(text) {
-    if(!text || text === "(        )") return text;
-    return text.split('\n').map(line => `<p>${line}</p>`).join('');
-}
-
-/* --- Export Functions --- */
-
-function printPetition() {
-    window.print();
-}
-
-function copyText() {
-    const range = document.createRange();
-    range.selectNode(document.getElementById('petition-paper'));
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand("copy");
-    window.getSelection().removeAllRanges();
-    alert("تم نسخ نص العريضة.");
-}
-
-function exportWord() {
-    const content = document.getElementById('petition-paper').innerHTML;
-    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
-            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
-            "xmlns='http://www.w3.org/TR/REC-html40' dir='rtl'>";
-    const body = "<body style='font-family: Amiri, serif; text-align: right;'>" + content + "</body></html>";
-    
-    const blob = new Blob(['\ufeff', header + body], {
-        type: 'application/msword'
-    });
-    
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'petition.doc'; // Works better for simple HTML conversion than docx
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-function exportPDF() {
-    const element = document.getElementById('petition-paper');
-    const opt = {
-        margin:       10,
-        filename:     'petition.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    // Requires html2pdf library linked in HTML
-    html2pdf().set(opt).from(element).save();
 }
