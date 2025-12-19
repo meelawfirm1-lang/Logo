@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEELAWFIRM - Animated Logo</title>
+    <title>MEELAWFIRM - Animated Logo with Fireworks</title>
     <style>
-        /* إعدادات الخلفية */
         body {
             margin: 0;
             padding: 0;
@@ -15,7 +14,7 @@
             min-height: 100vh;
             background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
             overflow: hidden;
-            perspective: 1000px; /* لإعطاء عمق ثلاثي أبعاد */
+            perspective: 1000px;
         }
 
         /* حاوية الشعار */
@@ -23,20 +22,20 @@
             position: relative;
             cursor: pointer;
             transition: transform 0.1s ease-out;
+            z-index: 10;
         }
 
-        /* تنسيق الصورة (GIF) */
         .animated-logo {
-            width: 350px; /* يمكنك تعديل الحجم من هنا */
+            width: 350px;
             height: auto;
             position: relative;
             z-index: 5;
-            /* حركة التراقص (floating) */
             animation: danceEffect 4s infinite ease-in-out;
             filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+            user-select: none;
+            -webkit-user-drag: none;
         }
 
-        /* الضوء الملون خلف الشعار */
         .glow-effect {
             position: absolute;
             top: 50%;
@@ -51,28 +50,32 @@
             pointer-events: none;
         }
 
-        /* حركة التراقص */
         @keyframes danceEffect {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             25% { transform: translateY(-15px) rotate(2deg); }
             75% { transform: translateY(15px) rotate(-2deg); }
         }
 
-        /* دوران الضوء الخلفي */
         @keyframes rotateGlow {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* تأثير عند وضع الماوس على الشعار */
-        .logo-container:hover .animated-logo {
-            animation-play-state: paused; /* يتوقف عن الرقص ليبدأ التفاعل اليدوي */
-            filter: drop-shadow(0 0 30px rgba(0, 198, 255, 0.8));
+        /* حاوية الألعاب النارية */
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
         }
-
     </style>
 </head>
 <body>
+
+    <canvas id="canvas"></canvas>
 
     <div class="logo-container" id="logoWrapper">
         <div class="glow-effect" id="bgGlow"></div>
@@ -85,21 +88,88 @@
     <script>
         const container = document.getElementById('logoWrapper');
         const glow = document.getElementById('bgGlow');
-        const logo = document.getElementById('mainLogo');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-        // تفاعل ثلاثي الأبعاد مع حركة الماوس
+        // ضبط حجم الكانفاس
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // --- نظام الألعاب النارية ---
+        let particles = [];
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.alpha = 1;
+                this.friction = 0.95;
+            }
+
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.02;
+            }
+        }
+
+        function createFirework(x, y) {
+            const count = 30;
+            const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((particle, index) => {
+                if (particle.alpha > 0) {
+                    particle.update();
+                    particle.draw();
+                } else {
+                    particles.splice(index, 1);
+                }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // --- التفاعلات ---
+        
+        // عند الضغط تظهر الألعاب النارية
+        container.addEventListener('click', (e) => {
+            createFirework(e.clientX, e.clientY);
+        });
+
+        // تفاعل حركة الماوس (3D)
         document.addEventListener('mousemove', (e) => {
             let xAxis = (window.innerWidth / 2 - e.clientX) / 25;
             let yAxis = (window.innerHeight / 2 - e.clientY) / 25;
-            
             container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
             
-            // تغيير ألوان الضوء الخلفي ديناميكياً
             const hue = (e.clientX / window.innerWidth) * 360;
             glow.style.background = `radial-gradient(circle, hsla(${hue}, 100%, 50%, 0.4) 0%, transparent 70%)`;
         });
 
-        // إعادة الشعار لوضعه الطبيعي عند خروج الماوس
         container.addEventListener('mouseleave', () => {
             container.style.transition = "all 0.5s ease";
             container.style.transform = `rotateY(0deg) rotateX(0deg)`;
