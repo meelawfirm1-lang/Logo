@@ -3,132 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المساعد القانوني - النسخة الشاملة 2025</title>
+    <title>منصة الصياغة القانونية المتكاملة - السودان</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --legal-gold: #c5a059; --legal-blue: #1a2a44; --bg-gray: #f8f9fa; }
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-gray); }
-        .legal-header { background: var(--legal-blue); color: white; padding: 25px 0; border-bottom: 4px solid var(--legal-gold); }
-        .sidebar-card { background: white; border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: sticky; top: 20px; }
-        .form-select, .form-control { border-radius: 8px; border: 1px solid #ddd; padding: 10px; }
-        .form-select:focus { border-color: var(--legal-gold); box-shadow: 0 0 0 0.2rem rgba(197, 160, 89, 0.25); }
-        .btn-generate { background: var(--legal-blue); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; transition: 0.3s; }
-        .btn-generate:hover { background: #2c3e5a; color: var(--legal-gold); }
+        :root { --legal-blue: #1a2a44; --legal-gold: #c5a059; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f0f2f5; }
+        .header-bar { background: var(--legal-blue); color: white; padding: 20px 0; border-bottom: 5px solid var(--legal-gold); }
+        .main-card { background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 30px; }
+        .btn-generate { background: var(--legal-gold); color: white; border: none; font-weight: bold; transition: 0.3s; padding: 12px; }
+        .btn-generate:hover { background: #a38446; transform: scale(1.02); }
         #petitionOutput { 
             background: white; 
-            padding: 50px; 
-            border-radius: 8px; 
             min-height: 1000px; 
-            box-shadow: 0 0 15px rgba(0,0,0,0.05); 
+            padding: 60px; 
             font-family: 'Amiri', serif; 
             font-size: 1.4rem; 
-            line-height: 2;
+            line-height: 1.8; 
             color: #000;
+            border: 1px solid #ddd;
         }
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 5rem; color: rgba(0,0,0,0.03); pointer-events: none; text-transform: uppercase; }
         @media print { 
             .no-print { display: none !important; } 
+            #petitionOutput { border: none; padding: 0; }
             body { background: white; }
-            #petitionOutput { box-shadow: none; padding: 0; border: none; }
-            @page { margin: 2cm; }
         }
     </style>
 </head>
 <body>
 
-<header class="legal-header text-center no-print mb-4">
+<header class="header-bar text-center no-print mb-4">
     <div class="container">
-        <h2>⚖️ منصة المحامي الرقمي الذكية</h2>
-        <p class="mb-0">الصياغة القانونية الآلية - الدائرة المدنية والجنائية والأحوال الشخصية</p>
+        <h1>⚖️ المكتب القانوني الرقمي</h1>
+        <p>نظام توليد العرائض الآلي (مدني - جنائي - أحوال شخصية)</p>
     </div>
 </header>
 
-<div class="container-fluid px-4">
+<div class="container-fluid px-5">
     <div class="row">
-        <div class="col-lg-4 no-print mb-4">
-            <div class="sidebar-card p-4">
-                <h5 class="text-center mb-4 border-bottom pb-2">خيارات العريضة</h5>
+        <div class="col-lg-4 no-print">
+            <div class="main-card mb-4">
+                <h5 class="border-bottom pb-2 mb-3">🛠️ إعدادات العريضة</h5>
                 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">اختر نوع الدعوى أو المادة</label>
-                    <select id="petitionType" class="form-select select-lg" onchange="updateLabels()">
-                        <option value="">-- ابحث عن النموذج هنا --</option>
+                    <label class="form-label fw-bold">تصنيف ونوع الدعوى</label>
+                    <select id="petitionType" class="form-select form-select-lg" onchange="updateLabels()">
+                        <option value="">-- اختر النموذج --</option>
                         
-                        <optgroup label="🚨 العرائض الجنائية">
-                            <option value="crim_1">فتح بلاغ جنائي (قيد إجرائي)</option>
+                        <optgroup label="🚨 القسم الجنائي">
+                            <option value="crim_1">عريضة فتح بلاغ جنائي</option>
                             <option value="crim_2">طلب إطلاق سراح بالضمان</option>
                         </optgroup>
 
-                        <optgroup label="🏢 الدائرة المدنية">
-                            <option value="civ_1">مطالبة مالية (مدني)</option>
-                            <option value="civ_2">إخلاء عقار / فسخ عقد</option>
+                        <optgroup label="🏢 القسم المدني">
+                            <option value="civ_1">دعوى مطالبة مالية</option>
+                            <option value="civ_2">دعوى إخلاء عقار</option>
+                            <option value="civ_3">دعوى تعويض عن ضرر</option>
                         </optgroup>
 
                         <optgroup label="💰 نفقات وأموال (أحوال شخصية)">
-                            <option value="fam_1">نفقة زوجية (سابقة ومستمرة)</option>
-                            <option value="fam_2">نفقة بنوة (أولاد)</option>
-                            <option value="fam_3">زيادة نفقة بنوة</option>
-                            <option value="fam_4">نفقة أقارب (إخوة / أبوة)</option>
-                            <option value="fam_5">نفقة عدة ومتعة</option>
-                            <option value="fam_6">مطالبة بمؤخر صداق</option>
-                            <option value="fam_7">رد مال خطبة (شبكة وهدايا)</option>
-                            <option value="fam_8">استرداد مصاغ ذهبي</option>
-                            <option value="fam_9">دعوى أمتعة منزلية</option>
+                            <option value="fam_n_wife">نفقة زوجية (سابقة ومستمرة)</option>
+                            <option value="fam_n_kids">نفقة بنوة (أولاد)</option>
+                            <option value="fam_n_increase">زيادة نفقة بنوة</option>
+                            <option value="fam_n_parents">نفقة أبوة (بر والدين)</option>
+                            <option value="fam_n_siblings">نفقة إخوة</option>
+                            <option value="fam_n_waiting">نفقة عدة ومتعة</option>
+                            <option value="fam_m_dowry">مطالبة بمؤخر صداق</option>
+                            <option value="fam_m_engagement">رد مال خطبة (شبكة وهدايا)</option>
+                            <option value="fam_m_gold">استرداد مصاغ ذهبي</option>
+                            <option value="fam_m_furniture">دعوى أمتعة منزلية</option>
                         </optgroup>
 
-                        <optgroup label="🏠 حضانة ونسب وسفر">
-                            <option value="fam_10">رؤية واصطحاب محضون</option>
-                            <option value="fam_13">إذن سفر بالمحضون</option>
-                            <option value="fam_14">إثبات نسب</option>
-                            <option value="fam_12">ضم محضون</option>
+                        <optgroup label="🛡️ حضانة ونسب وسفر">
+                            <option value="fam_h_travel">إذن سفر بالمحضون</option>
+                            <option value="fam_h_origin">إثبات نسب</option>
+                            <option value="fam_h_view">رؤية واصطحاب محضون</option>
                         </optgroup>
 
-                        <optgroup label="💍 مواد الزواج والطلاق">
-                            <option value="fam_18">دعوى طاعة / فسخ نكاح</option>
-                            <option value="fam_19">إثبات طلاق (مصادقة)</option>
-                            <option value="fam_20">مادة إذن زواج (عضل ولي / أجنبي)</option>
-                            <option value="fam_21">مادة تصادق على زواج</option>
+                        <optgroup label="💍 الزواج والطلاق والطاعة">
+                            <option value="fam_z_marry_perm">مادة إذن زواج (عضل ولي)</option>
+                            <option value="fam_z_foreign">مادة إذن زواج من أجنبي</option>
+                            <option value="fam_z_confirm">مادة تصادق على زواج</option>
+                            <option value="fam_z_obey">دعوى طاعة</option>
+                            <option value="fam_z_divorce">إثبات طلاق (مصادقة)</option>
                         </optgroup>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">المحكمة المختصة</label>
-                    <input type="text" id="courtName" class="form-control" placeholder="مثلاً: محكمة الأحوال الشخصية أمدرمان">
+                    <label class="form-label fw-bold">المحكمة / النيابة</label>
+                    <input type="text" id="courtName" class="form-control" placeholder="مثلاً: محكمة الأحوال الشخصية الخرطوم">
                 </div>
 
                 <div class="mb-3">
-                    <label id="p1Label" class="form-label fw-bold">الطرف الأول (المدعي)</label>
+                    <label id="p1Label" class="form-label fw-bold">المدعي / مقدم الطلب</label>
                     <input type="text" id="party1" class="form-control" placeholder="الاسم الكامل">
                 </div>
 
                 <div class="mb-3">
-                    <label id="p2Label" class="form-label fw-bold">الطرف الثاني (المدعى عليه)</label>
+                    <label id="p2Label" class="form-label fw-bold">المدعى عليه / المشكو ضده</label>
                     <input type="text" id="party2" class="form-control" placeholder="الاسم الكامل">
                 </div>
 
-                <button class="btn btn-generate mb-2" onclick="generatePetition()">🚀 توليد العريضة</button>
-                <button class="btn btn-outline-dark w-100" onclick="window.print()">🖨️ طباعة فورية</button>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <button class="btn btn-generate w-100" onclick="generatePetition()">🛠️ توليد</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-dark w-100" onclick="window.print()">🖨️ طباعة</button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="col-lg-8">
-            <div id="petitionOutput" class="position-relative">
-                <div class="watermark text-uppercase">Legal Draft</div>
-                <div class="text-center text-muted" style="margin-top: 200px;">
-                    <i class="display-1 d-block mb-3">⚖️</i>
-                    <h4>جاهز للصياغة القانونية</h4>
-                    <p>اختر نوع النموذج من القائمة اليمنى وادخل البيانات للبدء</p>
+            <div id="petitionOutput">
+                <div class="text-center text-muted" style="margin-top: 150px;">
+                    <h3>المعاينة القانونية</h3>
+                    <p>سيظهر نص العريضة هنا بعد إدخال البيانات</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<footer class="text-center py-4 no-print border-top mt-5">
-    <p class="text-muted small">نظام إدارة العرائض القانونية - السودان © 2025</p>
-</footer>
 
 <script src="assets/app.js"></script>
 </body>
