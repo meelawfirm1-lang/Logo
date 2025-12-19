@@ -1,101 +1,134 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام صياغة العرائض القانونية - السودان</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>MEELAWFIRM Interactive Animation</title>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #34495e; }
-        select, input { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 18px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        button:hover { background: #219150; }
-        #petitionOutput { margin-top: 30px; border: 2px dashed #bdc3c7; padding: 20px; min-height: 200px; background: #fff; }
-        .print-btn { background: #3498db; margin-top: 20px; }
-        @media print { .no-print { display: none; } body { padding: 0; } .container { box-shadow: none; max-width: 100%; } }
+        /* إعدادات الخلفية والجسم */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* حاوية النص */
+        .container {
+            position: relative;
+            text-align: center;
+        }
+
+        /* تنسيق الكلمة */
+        .word {
+            display: flex;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        /* تنسيق كل حرف */
+        .letter {
+            font-size: 80px;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            display: inline-block;
+            transition: transform 0.3s ease;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: dance 2s infinite ease-in-out alternate;
+        }
+
+        /* حركة التراقص */
+        @keyframes dance {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(-5deg); }
+        }
+
+        /* تأخير الحركة لكل حرف ليعطي شكل الموجة */
+        .letter:nth-child(1) { animation-delay: 0.1s; }
+        .letter:nth-child(2) { animation-delay: 0.2s; }
+        .letter:nth-child(3) { animation-delay: 0.3s; }
+        .letter:nth-child(4) { animation-delay: 0.4s; }
+        .letter:nth-child(5) { animation-delay: 0.5s; }
+        .letter:nth-child(6) { animation-delay: 0.6s; }
+        .letter:nth-child(7) { animation-delay: 0.7s; }
+        .letter:nth-child(8) { animation-delay: 0.8s; }
+        .letter:nth-child(9) { animation-delay: 0.9s; }
+        .letter:nth-child(10) { animation-delay: 1.0s; }
+
+        /* تأثير الضوء الملون المتحرك خلف النص */
+        .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, rgba(255,0,255,0.2) 50%, transparent 70%);
+            filter: blur(50px);
+            z-index: -1;
+            animation: rotateGlow 5s linear infinite;
+        }
+
+        @keyframes rotateGlow {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* تأثير عند تمرير الماوس */
+        .letter:hover {
+            color: #00d2ff;
+            text-shadow: 0 0 20px #00d2ff, 0 0 40px #00d2ff;
+            transform: scale(1.5) !important;
+            animation-play-state: paused;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1 class="no-print">المحامي الذكي - صياغة العرائض</h1>
-    
-    <div class="no-print">
-        <div class="form-group">
-            <label>اختر نوع العريضة القانونية:</label>
-            <select id="petitionType" onchange="updateLabels()">
-                <option value="">-- اختر العريضة --</option>
-                
-                <optgroup label="🏠 إخلاءات وإيجارات (مدني)">
-                    <option value="civ_nuisance">إخلاء (إزعاج/آداب)</option>
-                    <option value="civ_sublease">إخلاء (إيجار من باطن)</option>
-                    <option value="civ_alteration">إخلاء (تغييرات جوهرية)</option>
-                    <option value="civ_new_owner">إخلاء (للمالك الجديد)</option>
-                    <option value="civ_urgent_need">إخلاء (حوجة ماسة)</option>
-                    <option value="civ_failure_pay">إخلاء (فشل سداد)</option>
-                    <option value="civ_judgment_end">إخلاء (انتهاء إجارة حكمية)</option>
-                </optgroup>
-
-                <optgroup label="💰 مطالبات مالية ومدنية">
-                    <option value="civ_money_1">مطالبة مالية (بضاعة)</option>
-                    <option value="civ_money_2">مطالبة مالية (ديون)</option>
-                    <option value="civ_fair_rent">دعوى أجرة مثل</option>
-                    <option value="civ_partnership">فض شراكة</option>
-                    <option value="civ_sale_confirm">إثبات بيع وعقار</option>
-                    <option value="civ_possession">إثبات حيازة</option>
-                    <option value="civ_easement">حق الارتفاق (نوافذ/ضرر)</option>
-                </optgroup>
-
-                <optgroup label="💼 قضايا العمل">
-                    <option value="civ_labour">دعوى عمل (فصل ومستحقات)</option>
-                </optgroup>
-
-                <optgroup label="💍 الأحوال الشخصية (أسرة)">
-                    <option value="fam_n_wife">نفقة زوجية</option>
-                    <option value="fam_n_kids">نفقة بنوة</option>
-                    <option value="fam_z_harm">طلاق للضرر</option>
-                    <option value="fam_z_khula">طلاق للفدية (خلع)</option>
-                    <option value="fam_z_obey">دعوى طاعة</option>
-                    <option value="fam_m_gold">استرداد ذهب</option>
-                    <option value="fam_m_furniture">أمتعة منزلية</option>
-                    <option value="fam_h_travel">إذن سفر بمحضون</option>
-                    <option value="fam_z_marry">إذن زواج (عضل)</option>
-                    <option value="fam_h_origin">إثبات نسب</option>
-                </optgroup>
-
-                <optgroup label="⚖️ القضايا الجنائية">
-                    <option value="crim_1">فتح بلاغ جنائي</option>
-                    <option value="crim_2">طلب ضمانة</option>
-                </optgroup>
-            </select>
+    <div class="container">
+        <div class="glow"></div>
+        <div class="word" id="interactiveWord">
+            <span class="letter">M</span>
+            <span class="letter">E</span>
+            <span class="letter">E</span>
+            <span class="letter">L</span>
+            <span class="letter">A</span>
+            <span class="letter">W</span>
+            <span class="letter">F</span>
+            <span class="letter">I</span>
+            <span class="letter">R</span>
+            <span class="letter">M</span>
         </div>
-
-        <div class="form-group">
-            <label id="courtLabel">اسم المحكمة الموجه إليها العريضة:</label>
-            <input type="text" id="courtName" placeholder="مثلاً: محكمة الخرطوم شمال">
-        </div>
-
-        <div class="form-group">
-            <label id="p1Label">اسم المدعي (الطرف الأول):</label>
-            <input type="text" id="party1" placeholder="الاسم الكامل">
-        </div>
-
-        <div class="form-group">
-            <label id="p2Label">اسم المدعى عليه (الطرف الثاني):</label>
-            <input type="text" id="party2" placeholder="الاسم الكامل">
-        </div>
-
-        <button onclick="generatePetition()">توليد العريضة الآن</button>
-        <button class="print-btn" onclick="window.print()">طباعة العريضة (PDF)</button>
     </div>
 
-    <div id="petitionOutput"></div>
-</div>
+    <script>
+        const wordContainer = document.getElementById('interactiveWord');
+        const letters = document.querySelectorAll('.letter');
 
-<script src="assets/app.js"></script>
+        // إضافة تفاعل عند حركة الماوس على الصفحة كاملة
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            // تغيير ألوان الضوء بناءً على حركة الماوس
+            const glow = document.querySelector('.glow');
+            glow.style.background = `radial-gradient(circle, rgba(${x * 255}, ${y * 255}, 255, 0.4) 0%, transparent 70%)`;
+        });
+
+        // جعل الأحرف تهرب قليلاً عند اقتراب الماوس منها
+        letters.forEach(letter => {
+            letter.addEventListener('mouseover', () => {
+                const randomColor = Math.floor(Math.random()*16777215).toString(16);
+                letter.style.color = "#" + randomColor;
+            });
+        });
+    </script>
 </body>
 </html>
