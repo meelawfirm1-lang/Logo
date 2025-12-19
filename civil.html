@@ -1,128 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>العرائض المدنية - MEELAWFIRM</title>
-    <link rel="stylesheet" href="assets/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-</head>
-<body>
-
-    <header>
-        <div class="brand">
-            <h1>MEELAWFIRM ⚖️</h1>
-            <span>قسم العرائض المدنية</span>
-        </div>
-        <div class="search-bar">
-            <input type="text" id="templateSearch" placeholder="ابحث عن نموذج (إخلاء، مطالبة...)" onkeyup="filterTemplates()">
-        </div>
-        <nav>
-            <a href="index.html">الرئيسية</a>
-            <a href="civil.html" class="active">العرائض المدنية</a>
-            <a href="criminal.html">العرائض الجنائية</a>
-            <a href="personal.html">الأحوال الشخصية</a>
-        </nav>
-    </header>
-
-    <div class="container">
-        <div class="editor-panel">
-            <div class="form-group">
-                <label>اختر نموذج العريضة المدنية:</label>
-                <select id="templateSelector" onchange="loadTemplate()">
-                    <option value="">-- اختر نموذجاً فارغاً --</option>
-                    <option value="eviction_nuisance">إخلاء للإزعاج العام والمنافاة للآداب</option>
-                    <option value="eviction_sublet">إخلاء للإيجارة من الباطن</option>
-                    <option value="eviction_changes">إخلاء لإجراء تغييرات جوهرية</option>
-                    <option value="eviction_new_owner">إخلاء للمالك الجديد</option>
-                    <option value="eviction_statutory">إخلاء لانتهاء الإجارة الحكمية</option>
-                    <option value="rent_increase">دعوى أجرة المثل (تعديل الأجرة)</option>
-                    <option value="dissolve_partnership">دعوى فض شراكة</option>
-                    <option value="possession_proof">دعوى إثبات حيازة</option>
-                    <option value="labor_dispute">دعوى عمل (فصل تعسفي ومستحقات)</option>
-                    <option value="money_claim_1">مطالبة مالية (بضاعة)</option>
-                    <option value="money_claim_2">مطالبة مالية (مديونية قرض)</option>
-                    <option value="sale_proof">دعوى إثبات بيع عقار</option>
-                    <option value="easement_right">دعوى حق الارتفاق (الضرر)</option>
-                    <option value="urgent_need">إخلاء للحوجة الماسة</option>
-                    <option value="payment_failure">إخلاء للفشل في السداد</option>
-                </select>
-            </div>
-
-            <form id="petitionForm" onsubmit="event.preventDefault(); generatePetition();">
-                <div class="form-group">
-                    <label>المحكمة المختصة</label>
-                    <input type="text" id="courtName" placeholder="محكمة .... الجزئية">
-                </div>
-
-                <div class="form-group">
-                    <label>رقم الدعوى (ق م / ... / ...)</label>
-                    <input type="text" id="caseNumber" placeholder="ق م/..../.........">
-                </div>
-
-                <div class="form-group">
-                    <label>المدعي (الاسم والعنوان)</label>
-                    <input type="text" id="plaintiffName">
-                </div>
-
-                <div class="form-group">
-                    <label>المدعى عليه (الاسم والعنوان)</label>
-                    <textarea id="defendantName" style="height:50px;"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>الموضوع</label>
-                    <input type="text" id="petitionSubject">
-                </div>
-
-                <div class="form-group">
-                    <label>نص الوقائع والأسباب</label>
-                    <textarea id="petitionBody"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>الطلبات الختامية</label>
-                    <textarea id="petitionRequests" style="height:80px;"></textarea>
-                </div>
-
-                <div style="display:flex; gap:10px;">
-                    <div class="form-group" style="flex:1">
-                        <label>المرفقات</label>
-                        <textarea id="attachedDocs" style="height:50px;"></textarea>
-                    </div>
-                    <div class="form-group" style="flex:1">
-                        <label>الشهود</label>
-                        <textarea id="witnessesNames" style="height:50px;"></textarea>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>مقدم العريضة</label>
-                    <input type="text" id="lawyerName">
-                </div>
-
-                <button type="button" class="btn-generate" onclick="generatePetition()">🔄 تحديث المعاينة</button>
-            </form>
-        </div>
-
-        <div class="preview-panel">
-            <div class="toolbar">
-                <button class="btn-tool btn-print" onclick="window.print()">🖨️ طباعة</button>
-                <button class="btn-tool btn-pdf" onclick="exportPDF()">📄 PDF</button>
-                <button class="btn-tool btn-word" onclick="exportWord()">📝 Word</button>
-            </div>
-            <div id="petition-paper">
-                </div>
-        </div>
-    </div>
-
-    <footer>
-        <p>YouTube | TikTok | Facebook | بريد إلكتروني</p>
-        <p>Legal Disclaimer | Privacy Policy | Terms Of Use | About Us | Contact Us</p>
-        <p>Powered by <strong>MEELAWFIRM</strong> | V: 2.1.5</p>
-    </footer>
-
-    <script src="assets/app.js"></script>
-    <script src="assets/civil-templates.js"></script>
-</body>
-</html>
